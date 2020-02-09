@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace Dragablz.Dockablz
 {
@@ -10,11 +9,11 @@ namespace Dragablz.Dockablz
         /// </summary>
         /// <param name="layout"></param>
         /// <returns></returns>
-        public static LayoutAccessor Query(this Layout layout)
+        public static LayoutAccessor Query ( this Layout layout )
         {
-            if (layout == null) throw new ArgumentNullException("layout");
+            if ( layout == null ) throw new ArgumentNullException ( "layout" );
 
-            return new LayoutAccessor(layout);
+            return new LayoutAccessor ( layout );
         }
 
         /// <summary>
@@ -27,19 +26,19 @@ namespace Dragablz.Dockablz
         /// <param name="tabablzControlVisitor"></param>
         /// <param name="contentVisitor"></param>
         /// <returns></returns>
-        public static LayoutAccessor Visit<TContext>(
+        public static LayoutAccessor Visit < TContext > (
             this LayoutAccessor layoutAccessor,
             TContext context,
-            Action<TContext, BranchAccessor> branchVisitor = null,
-            Action<TContext, TabablzControl> tabablzControlVisitor = null,
-            Action<TContext, object> contentVisitor = null)
+            Action < TContext, BranchAccessor > branchVisitor = null,
+            Action < TContext, TabablzControl > tabablzControlVisitor = null,
+            Action < TContext, object > contentVisitor = null )
         {
-            if (layoutAccessor == null) throw new ArgumentNullException("layoutAccessor");
+            if ( layoutAccessor == null ) throw new ArgumentNullException ( "layoutAccessor" );
 
-            layoutAccessor.Visit(
-                WrapVisitor(context, branchVisitor),
-                WrapVisitor(context, tabablzControlVisitor),
-                WrapVisitor(context, contentVisitor)
+            layoutAccessor.Visit (
+                WrapVisitor ( context, branchVisitor ),
+                WrapVisitor ( context, tabablzControlVisitor ),
+                WrapVisitor ( context, contentVisitor )
                 );
 
             return layoutAccessor;
@@ -56,31 +55,31 @@ namespace Dragablz.Dockablz
         /// <param name="tabablzControlVisitor"></param>
         /// <param name="contentVisitor"></param>
         /// <returns></returns>
-        public static BranchAccessor Visit<TContext>(
+        public static BranchAccessor Visit < TContext > (
             this BranchAccessor branchAccessor,
             TContext context,
             BranchItem childItem,
-            Action<TContext, BranchAccessor> branchVisitor = null,
-            Action<TContext, TabablzControl> tabablzControlVisitor = null,
-            Action<TContext, object> contentVisitor = null)
+            Action < TContext, BranchAccessor > branchVisitor = null,
+            Action < TContext, TabablzControl > tabablzControlVisitor = null,
+            Action < TContext, object > contentVisitor = null )
         {
-            if (branchAccessor == null) throw new ArgumentNullException("branchAccessor");
+            if ( branchAccessor == null ) throw new ArgumentNullException ( "branchAccessor" );
 
-            branchAccessor.Visit(
+            branchAccessor.Visit (
                 childItem,
-                WrapVisitor(context, branchVisitor),
-                WrapVisitor(context, tabablzControlVisitor),
-                WrapVisitor(context, contentVisitor)
+                WrapVisitor ( context, branchVisitor ),
+                WrapVisitor ( context, tabablzControlVisitor ),
+                WrapVisitor ( context, contentVisitor )
                 );
 
             return branchAccessor;
         }
 
-        private static Action<TVisitArg> WrapVisitor<TContext, TVisitArg>(TContext context, Action<TContext, TVisitArg> visitor)
+        private static Action < TVisitArg > WrapVisitor < TContext, TVisitArg > ( TContext context, Action < TContext, TVisitArg > visitor )
         {
-            if (visitor == null) return null;
+            if ( visitor == null ) return null;
 
-            return a => visitor(context, a);
+            return a => visitor ( context, a );
         }
     }
 }

@@ -4,17 +4,17 @@ namespace Dragablz.Referenceless
 {
     internal sealed class DefaultDisposable : IDisposable
     {
-        public static readonly DefaultDisposable Instance = new DefaultDisposable();
+        public static readonly DefaultDisposable Instance = new DefaultDisposable ( );
 
-        static DefaultDisposable()
+        static DefaultDisposable ( )
         {
         }
 
-        private DefaultDisposable()
+        private DefaultDisposable ( )
         {
         }
 
-        public void Dispose()
+        public void Dispose ( )
         {
         }
     }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Baml2006;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -14,11 +9,11 @@ namespace Dragablz
     {
         private PathGeometry _pathGeometry;
 
-        static Trapezoid()
+        static Trapezoid ( )
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Trapezoid), new FrameworkPropertyMetadata(typeof(Trapezoid)));
-            BackgroundProperty.OverrideMetadata(typeof(Trapezoid), new FrameworkPropertyMetadata(Panel.BackgroundProperty.DefaultMetadata.DefaultValue,
-                        FrameworkPropertyMetadataOptions.AffectsRender));
+            DefaultStyleKeyProperty.OverrideMetadata ( typeof ( Trapezoid ), new FrameworkPropertyMetadata ( typeof ( Trapezoid ) ) );
+            BackgroundProperty.OverrideMetadata ( typeof ( Trapezoid ), new FrameworkPropertyMetadata ( Panel.BackgroundProperty.DefaultMetadata.DefaultValue,
+                        FrameworkPropertyMetadataOptions.AffectsRender ) );
         }
 
         public static readonly DependencyProperty PenBrushProperty = DependencyProperty.Register(
@@ -26,8 +21,8 @@ namespace Dragablz
 
         public Brush PenBrush
         {
-            get { return (Brush) GetValue(PenBrushProperty); }
-            set { SetValue(PenBrushProperty, value); }
+            get { return (Brush) GetValue ( PenBrushProperty ); }
+            set { SetValue ( PenBrushProperty, value ); }
         }
 
         public static readonly DependencyProperty LongBasePenBrushProperty = DependencyProperty.Register(
@@ -35,8 +30,8 @@ namespace Dragablz
 
         public Brush LongBasePenBrush
         {
-            get { return (Brush) GetValue(LongBasePenBrushProperty); }
-            set { SetValue(LongBasePenBrushProperty, value); }
+            get { return (Brush) GetValue ( LongBasePenBrushProperty ); }
+            set { SetValue ( LongBasePenBrushProperty, value ); }
         }
 
         public static readonly DependencyProperty PenThicknessProperty = DependencyProperty.Register(
@@ -44,44 +39,44 @@ namespace Dragablz
 
         public double PenThickness
         {
-            get { return (double) GetValue(PenThicknessProperty); }
-            set { SetValue(PenThicknessProperty, value); }
+            get { return (double) GetValue ( PenThicknessProperty ); }
+            set { SetValue ( PenThicknessProperty, value ); }
         }
 
-        protected override Size MeasureOverride(Size constraint)
+        protected override Size MeasureOverride ( Size constraint )
         {
             var contentDesiredSize = base.MeasureOverride(constraint);
 
-            if (contentDesiredSize.Width == 0 || double.IsInfinity(contentDesiredSize.Width)
-                || contentDesiredSize.Height == 0 || double.IsInfinity(contentDesiredSize.Height))
+            if ( contentDesiredSize.Width == 0 || double.IsInfinity ( contentDesiredSize.Width )
+                || contentDesiredSize.Height == 0 || double.IsInfinity ( contentDesiredSize.Height ) )
 
                 return contentDesiredSize;
 
-            _pathGeometry = CreateGeometry(contentDesiredSize);
+            _pathGeometry = CreateGeometry ( contentDesiredSize );
             Clip = _pathGeometry;
 
-            return _pathGeometry.GetRenderBounds(new Pen(PenBrush, 1)
+            return _pathGeometry.GetRenderBounds ( new Pen ( PenBrush, 1 )
             {
                 EndLineCap = PenLineCap.Flat,
                 MiterLimit = 1
-            }).Size;
+            } ).Size;
         }
 
-        private Pen CreatePen()
+        private Pen CreatePen ( )
         {
-            return new Pen(PenBrush, PenThickness)
+            return new Pen ( PenBrush, PenThickness )
             {
                 EndLineCap = PenLineCap.Flat,
                 MiterLimit = 1
             };
         }
 
-        private static PathGeometry CreateGeometry(Size contentDesiredSize)
+        private static PathGeometry CreateGeometry ( Size contentDesiredSize )
         {
             //TODO Make better :)  do some funky beziers or summit
             const double cheapRadiusBig = 6.0;
             const double cheapRadiusSmall = cheapRadiusBig/2;
-            
+
             const int angle = 20;
             const double radians = angle * (Math.PI / 180);
 
@@ -96,7 +91,7 @@ namespace Dragablz
             var topSegment = new LineSegment(new Point(contentDesiredSize.Width + cheapRadiusBig + cheapRadiusBig, 0), true);
             var topRightSegment = new ArcSegment(new Point(contentDesiredSize.Width + cheapRadiusBig + cheapRadiusBig + cheapRadiusBig, cheapRadiusSmall), new Size(cheapRadiusBig, cheapRadiusBig), 40, false, SweepDirection.Clockwise, true);
 
-            triangleX = Math.Tan(radians) * (contentDesiredSize.Height);
+            triangleX = Math.Tan ( radians ) * ( contentDesiredSize.Height );
             //triangleX = Math.Tan(radians)*(contentDesiredSize.Height - topRightSegment.Point.Y);
             var rightSegment =
                 new LineSegment(new Point(topRightSegment.Point.X + triangleX,
@@ -107,7 +102,7 @@ namespace Dragablz
             var bottomRightSegment = new ArcSegment(bottomRightPoint,
                 new Size(cheapRadiusSmall, cheapRadiusSmall), 25, false, SweepDirection.Counterclockwise, true);
             var bottomLeftPoint = new Point(0, bottomRightSegment.Point.Y);
-            var bottomSegment = new LineSegment(bottomLeftPoint, true);            
+            var bottomSegment = new LineSegment(bottomLeftPoint, true);
 
             var pathSegmentCollection = new PathSegmentCollection
             {
@@ -121,23 +116,23 @@ namespace Dragablz
             {
                 pathFigure
             };
-            var geometryGroup = new PathGeometry(pathFigureCollection);            
-            geometryGroup.Freeze();                        
+            var geometryGroup = new PathGeometry(pathFigureCollection);
+            geometryGroup.Freeze ( );
 
             return geometryGroup;
         }
 
-        protected override void OnRender(DrawingContext drawingContext)
+        protected override void OnRender ( DrawingContext drawingContext )
         {
-            base.OnRender(drawingContext);                        
-            drawingContext.DrawGeometry(Background, CreatePen(), _pathGeometry);
+            base.OnRender ( drawingContext );
+            drawingContext.DrawGeometry ( Background, CreatePen ( ), _pathGeometry );
 
-            if (_pathGeometry == null) return;
-            drawingContext.DrawGeometry(Background, new Pen(LongBasePenBrush, PenThickness)
+            if ( _pathGeometry == null ) return;
+            drawingContext.DrawGeometry ( Background, new Pen ( LongBasePenBrush, PenThickness )
             {
                 EndLineCap = PenLineCap.Flat,
                 MiterLimit = 1
-            }, new LineGeometry(_pathGeometry.Bounds.BottomLeft + new Vector(3, 0), _pathGeometry.Bounds.BottomRight + new Vector(-3, 0)));
+            }, new LineGeometry ( _pathGeometry.Bounds.BottomLeft + new Vector ( 3, 0 ), _pathGeometry.Bounds.BottomRight + new Vector ( -3, 0 ) ) );
         }
     }
 }

@@ -15,14 +15,14 @@ namespace Dragablz.Dockablz
 
         //TODO I've internalised constructor for now, so I can come back and add Window without breaking.
 
-        internal LocationReport(TabablzControl tabablzControl, Layout rootLayout)
-            : this(tabablzControl, rootLayout, null, false)
+        internal LocationReport ( TabablzControl tabablzControl, Layout rootLayout )
+            : this ( tabablzControl, rootLayout, null, false )
         { }
 
-        internal LocationReport(TabablzControl tabablzControl, Layout rootLayout, Branch parentBranch, bool isSecondLeaf)
+        internal LocationReport ( TabablzControl tabablzControl, Layout rootLayout, Branch parentBranch, bool isSecondLeaf )
         {
-            if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
-            if (rootLayout == null) throw new ArgumentNullException("rootLayout");
+            if ( tabablzControl == null ) throw new ArgumentNullException ( "tabablzControl" );
+            if ( rootLayout == null ) throw new ArgumentNullException ( "rootLayout" );
 
             _tabablzControl = tabablzControl;
             _rootLayout = rootLayout;

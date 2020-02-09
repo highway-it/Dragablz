@@ -15,17 +15,17 @@ namespace Dragablz.Referenceless
             }
         }
 
-        public AnonymousDisposable(Action dispose)
+        public AnonymousDisposable ( Action dispose )
         {
             this._dispose = dispose;
         }
 
-        public void Dispose()
+        public void Dispose ( )
         {
-            var action = Interlocked.Exchange<Action>(ref _dispose, (Action)null);
-            if (action == null)
+            var action = Interlocked.Exchange < Action >(ref _dispose, (Action)null);
+            if ( action == null )
                 return;
-            action();
+            action ( );
         }
     }
 }

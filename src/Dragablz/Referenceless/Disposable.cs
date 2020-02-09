@@ -8,16 +8,16 @@ namespace Dragablz.Referenceless
         {
             get
             {
-                return (IDisposable)DefaultDisposable.Instance;
+                return (IDisposable) DefaultDisposable.Instance;
             }
         }
 
-        public static IDisposable Create(Action dispose)
+        public static IDisposable Create ( Action dispose )
         {
-            if (dispose == null)
-                throw new ArgumentNullException("dispose");
+            if ( dispose == null )
+                throw new ArgumentNullException ( "dispose" );
             else
-                return (IDisposable)new AnonymousDisposable(dispose);
+                return (IDisposable) new AnonymousDisposable ( dispose );
         }
     }
 }

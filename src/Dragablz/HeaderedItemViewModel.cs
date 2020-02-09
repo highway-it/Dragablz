@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dragablz
 {
@@ -17,11 +12,11 @@ namespace Dragablz
         private object _header;
         private object _content;
 
-        public HeaderedItemViewModel()
+        public HeaderedItemViewModel ( )
         {
         }
 
-        public HeaderedItemViewModel(object header, object content, bool isSelected = false)
+        public HeaderedItemViewModel ( object header, object content, bool isSelected = false )
         {
             _header = header;
             _content = content;
@@ -33,9 +28,9 @@ namespace Dragablz
             get { return _header; }
             set
             {
-                if (_header == value) return;
+                if ( _header == value ) return;
                 _header = value;
-                OnPropertyChanged();
+                OnPropertyChanged ( );
             }
         }
 
@@ -44,9 +39,9 @@ namespace Dragablz
             get { return _content; }
             set
             {
-                if (_content == value) return;
+                if ( _content == value ) return;
                 _content = value;
-                OnPropertyChanged();
+                OnPropertyChanged ( );
             }
         }
 
@@ -55,18 +50,18 @@ namespace Dragablz
             get { return _isSelected; }
             set
             {
-                if (_isSelected == value) return;
+                if ( _isSelected == value ) return;
                 _isSelected = value;
-                OnPropertyChanged();
+                OnPropertyChanged ( );
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged ( [CallerMemberName] string propertyName = null )
         {
             var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if ( handler != null ) handler ( this, new PropertyChangedEventArgs ( propertyName ) );
         }
     }
 }

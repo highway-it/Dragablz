@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Dragablz.Dockablz;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
-
-using Dragablz.Dockablz;
 
 namespace Dragablz.Savablz
 {
@@ -20,7 +19,7 @@ namespace Dragablz.Savablz
         /// <typeparam name="TTabViewModel">The type of tab view model, currently displayed in the app.</typeparam>
         /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
         /// <returns>The state of all windows</returns>
-        public static IEnumerable < LayoutWindowState < TTabModel, object? > > GetWindowsState < TTabModel, TTabViewModel > ( Func < TTabViewModel, TTabModel > tabContentModelConverter )
+        public static IEnumerable<LayoutWindowState<TTabModel, object?>> GetWindowsState < TTabModel, TTabViewModel > ( Func < TTabViewModel, TTabModel > tabContentModelConverter )
         {
             return Layout.GetLoadedInstances ( ).Select ( layout => GetLayoutState ( layout, tabContentModelConverter, window => (object?) null ) );
         }
@@ -34,7 +33,7 @@ namespace Dragablz.Savablz
         /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
         /// <param name="windowSettingsConverter">The function that serializes custom window settings</param>
         /// <returns>The state of all windows</returns>
-        public static IEnumerable < LayoutWindowState < TTabModel, TWindowSettings > > GetWindowsState < TTabModel, TTabViewModel, TWindowSettings > ( Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
+        public static IEnumerable<LayoutWindowState < TTabModel, TWindowSettings >> GetWindowsState < TTabModel, TTabViewModel, TWindowSettings > ( Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
         {
             return Layout.GetLoadedInstances ( ).Select ( layout => GetLayoutState ( layout, tabContentModelConverter, windowSettingsConverter ) );
         }
@@ -117,9 +116,9 @@ namespace Dragablz.Savablz
         /// <param name="windowInitialTabablzControl">The initial tabablz control that will be used for restore</param>
         /// <param name="layoutWindowsState">The state of the windows</param>
         /// <param name="viewModelFactory">The function that creates the view model based on a model</param>
-        public static void RestoreWindowsState < TTabModel, TTabViewModel > ( TabablzControl windowInitialTabablzControl, LayoutWindowState < TTabModel, object? > [ ] layoutWindowsState, Func < TTabModel, TTabViewModel > viewModelFactory )
+        public static void RestoreWindowsState < TTabModel, TTabViewModel > ( TabablzControl windowInitialTabablzControl, LayoutWindowState<TTabModel, object?> [ ] layoutWindowsState, Func < TTabModel, TTabViewModel > viewModelFactory )
         {
-            RestoreWindowsState ( windowInitialTabablzControl, layoutWindowsState, viewModelFactory, (window, settings) => { } );
+            RestoreWindowsState ( windowInitialTabablzControl, layoutWindowsState, viewModelFactory, ( window, settings ) => { } );
         }
 
         /// <summary>
@@ -142,10 +141,10 @@ namespace Dragablz.Savablz
             if ( mainWindow == null )
                 throw new InvalidOperationException ( "The TabablzControl is not bound to any window" );
 
-            mainWindow.Width       = mainWindowState.Width;
-            mainWindow.Height      = mainWindowState.Height;
-            mainWindow.Left        = mainWindowState.X;
-            mainWindow.Top         = mainWindowState.Y;
+            mainWindow.Width = mainWindowState.Width;
+            mainWindow.Height = mainWindowState.Height;
+            mainWindow.Left = mainWindowState.X;
+            mainWindow.Top = mainWindowState.Y;
             mainWindow.WindowState = mainWindowState.WindowState;
 
             using ( new WindowRestoringState ( mainWindow ) )
@@ -162,10 +161,10 @@ namespace Dragablz.Savablz
                                                                                         interTabController.Partition,
                                                                                         windowInitialTabablzControl );
 
-                newHost.Container.Width       = windowState.Width;
-                newHost.Container.Height      = windowState.Height;
-                newHost.Container.Left        = windowState.X;
-                newHost.Container.Top         = windowState.Y;
+                newHost.Container.Width = windowState.Width;
+                newHost.Container.Height = windowState.Height;
+                newHost.Container.Left = windowState.X;
+                newHost.Container.Top = windowState.Y;
                 newHost.Container.WindowState = windowState.WindowState;
 
                 using ( new WindowRestoringState ( newHost.Container ) )
@@ -213,7 +212,7 @@ namespace Dragablz.Savablz
             var newHost = layout.InterLayoutClient.GetNewHost ( tabablzControl.InterTabController.Partition, tabablzControl );
             var branch  = Layout.Branch ( tabablzControl, newHost.TabablzControl, branchState.Orientation, false, branchState.Ratio );
 
-            RestoreBranchItemState ( tabablzControl,        branchState.FirstChild,  viewModelFactory );
+            RestoreBranchItemState ( tabablzControl, branchState.FirstChild, viewModelFactory );
             RestoreBranchItemState ( branch.TabablzControl, branchState.SecondChild, viewModelFactory );
         }
 

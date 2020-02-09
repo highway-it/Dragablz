@@ -2,7 +2,4 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:dockablz="clr-namespace:Dragablz.Dockablz"
                     xmlns:converters="clr-namespace:Dragablz.Converters">
-
-
-
 </ResourceDictionary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,74 +9,74 @@ using System.Windows.Media.Animation;
 
 namespace Dragablz.Themes
 {
-    [TemplateVisualState(GroupName = "CommonStates", Name = TemplateStateNormal)]
-    [TemplateVisualState(GroupName = "CommonStates", Name = TemplateStateMousePressed)]
-    [TemplateVisualState(GroupName = "CommonStates", Name = TemplateStateMouseOut)]
+    [TemplateVisualState ( GroupName = "CommonStates", Name = TemplateStateNormal )]
+    [TemplateVisualState ( GroupName = "CommonStates", Name = TemplateStateMousePressed )]
+    [TemplateVisualState ( GroupName = "CommonStates", Name = TemplateStateMouseOut )]
     public class Ripple : ContentControl
     {
         public const string TemplateStateNormal = "Normal";
         public const string TemplateStateMousePressed = "MousePressed";
         public const string TemplateStateMouseOut = "MouseOut";
 
-        private static readonly HashSet<Ripple> PressedInstances = new HashSet<Ripple>();
+        private static readonly HashSet < Ripple > PressedInstances = new HashSet < Ripple > ( );
 
-        static Ripple()
+        static Ripple ( )
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Ripple), new FrameworkPropertyMetadata(typeof(Ripple)));
+            DefaultStyleKeyProperty.OverrideMetadata ( typeof ( Ripple ), new FrameworkPropertyMetadata ( typeof ( Ripple ) ) );
 
-            EventManager.RegisterClassHandler(typeof(Window), Mouse.PreviewMouseUpEvent, new MouseButtonEventHandler(MouseButtonEventHandler), true);
-            EventManager.RegisterClassHandler(typeof(Window), Mouse.MouseMoveEvent, new MouseEventHandler(MouseMouveEventHandler), true);
-            EventManager.RegisterClassHandler(typeof(UserControl), Mouse.PreviewMouseUpEvent, new MouseButtonEventHandler(MouseButtonEventHandler), true);
-            EventManager.RegisterClassHandler(typeof(UserControl), Mouse.MouseMoveEvent, new MouseEventHandler(MouseMouveEventHandler), true);
+            EventManager.RegisterClassHandler ( typeof ( Window ), Mouse.PreviewMouseUpEvent, new MouseButtonEventHandler ( MouseButtonEventHandler ), true );
+            EventManager.RegisterClassHandler ( typeof ( Window ), Mouse.MouseMoveEvent, new MouseEventHandler ( MouseMouveEventHandler ), true );
+            EventManager.RegisterClassHandler ( typeof ( UserControl ), Mouse.PreviewMouseUpEvent, new MouseButtonEventHandler ( MouseButtonEventHandler ), true );
+            EventManager.RegisterClassHandler ( typeof ( UserControl ), Mouse.MouseMoveEvent, new MouseEventHandler ( MouseMouveEventHandler ), true );
         }
 
-        public Ripple()
+        public Ripple ( )
         {
             SizeChanged += OnSizeChanged;
         }
 
-        private static void MouseButtonEventHandler(object sender, MouseButtonEventArgs e)
+        private static void MouseButtonEventHandler ( object sender, MouseButtonEventArgs e )
         {
-            foreach (var ripple in PressedInstances)
+            foreach ( var ripple in PressedInstances )
             {
                 // adjust the transition scale time according to the current animated scale
                 var scaleTrans = ripple.Template.FindName("ScaleTransform", ripple) as ScaleTransform;
-                if (scaleTrans != null)
+                if ( scaleTrans != null )
                 {
                     double currentScale = scaleTrans.ScaleX;
                     var newTime = TimeSpan.FromMilliseconds(300 * (1.0 - currentScale));
 
                     // change the scale animation according to the current scale
                     var scaleXKeyFrame = ripple.Template.FindName("MousePressedToNormalScaleXKeyFrame", ripple) as EasingDoubleKeyFrame;
-                    if (scaleXKeyFrame != null)
+                    if ( scaleXKeyFrame != null )
                     {
-                        scaleXKeyFrame.KeyTime = KeyTime.FromTimeSpan(newTime);
+                        scaleXKeyFrame.KeyTime = KeyTime.FromTimeSpan ( newTime );
                     }
                     var scaleYKeyFrame = ripple.Template.FindName("MousePressedToNormalScaleYKeyFrame", ripple) as EasingDoubleKeyFrame;
-                    if (scaleYKeyFrame != null)
+                    if ( scaleYKeyFrame != null )
                     {
-                        scaleYKeyFrame.KeyTime = KeyTime.FromTimeSpan(newTime);
+                        scaleYKeyFrame.KeyTime = KeyTime.FromTimeSpan ( newTime );
                     }
                 }
 
-                VisualStateManager.GoToState(ripple, TemplateStateNormal, true);
+                VisualStateManager.GoToState ( ripple, TemplateStateNormal, true );
             }
-            PressedInstances.Clear();
+            PressedInstances.Clear ( );
         }
 
-        private static void MouseMouveEventHandler(object sender, MouseEventArgs e)
+        private static void MouseMouveEventHandler ( object sender, MouseEventArgs e )
         {
-            foreach (var ripple in PressedInstances.ToList())
+            foreach ( var ripple in PressedInstances.ToList ( ) )
             {
                 var relativePosition = Mouse.GetPosition(ripple);
-                if (relativePosition.X < 0
+                if ( relativePosition.X < 0
                     || relativePosition.Y < 0
                     || relativePosition.X >= ripple.ActualWidth
-                    || relativePosition.Y >= ripple.ActualHeight)
+                    || relativePosition.Y >= ripple.ActualHeight )
 
                 {
-                    VisualStateManager.GoToState(ripple, TemplateStateMouseOut, true);
-                    PressedInstances.Remove(ripple);
+                    VisualStateManager.GoToState ( ripple, TemplateStateMouseOut, true );
+                    PressedInstances.Remove ( ripple );
                 }
             }
         }
@@ -87,19 +86,19 @@ namespace Dragablz.Themes
 
         public Brush Feedback
         {
-            get { return (Brush)GetValue(FeedbackProperty); }
-            set { SetValue(FeedbackProperty, value); }
+            get { return (Brush) GetValue ( FeedbackProperty ); }
+            set { SetValue ( FeedbackProperty, value ); }
         }
 
-        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected override void OnPreviewMouseLeftButtonDown ( MouseButtonEventArgs e )
         {
             var point = e.GetPosition(this);
 
-            if (RippleAssist.GetIsCentered(this))
+            if ( RippleAssist.GetIsCentered ( this ) )
             {
                 var innerContent = (Content as FrameworkElement);
 
-                if (innerContent != null)
+                if ( innerContent != null )
                 {
                     var position = innerContent.TransformToAncestor(this)
                         .Transform(new Point(0, 0));
@@ -119,11 +118,11 @@ namespace Dragablz.Themes
                 RippleY = point.Y - RippleSize / 2;
             }
 
-            VisualStateManager.GoToState(this, TemplateStateNormal, false);
-            VisualStateManager.GoToState(this, TemplateStateMousePressed, true);
-            PressedInstances.Add(this);
+            VisualStateManager.GoToState ( this, TemplateStateNormal, false );
+            VisualStateManager.GoToState ( this, TemplateStateMousePressed, true );
+            PressedInstances.Add ( this );
 
-            base.OnPreviewMouseLeftButtonDown(e);
+            base.OnPreviewMouseLeftButtonDown ( e );
         }
 
         private static readonly DependencyPropertyKey RippleSizePropertyKey =
@@ -136,8 +135,8 @@ namespace Dragablz.Themes
 
         public double RippleSize
         {
-            get { return (double)GetValue(RippleSizeProperty); }
-            private set { SetValue(RippleSizePropertyKey, value); }
+            get { return (double) GetValue ( RippleSizeProperty ); }
+            private set { SetValue ( RippleSizePropertyKey, value ); }
         }
 
         private static readonly DependencyPropertyKey RippleXPropertyKey =
@@ -150,8 +149,8 @@ namespace Dragablz.Themes
 
         public double RippleX
         {
-            get { return (double)GetValue(RippleXProperty); }
-            private set { SetValue(RippleXPropertyKey, value); }
+            get { return (double) GetValue ( RippleXProperty ); }
+            private set { SetValue ( RippleXPropertyKey, value ); }
         }
 
         private static readonly DependencyPropertyKey RippleYPropertyKey =
@@ -164,42 +163,42 @@ namespace Dragablz.Themes
 
         public double RippleY
         {
-            get { return (double)GetValue(RippleYProperty); }
-            private set { SetValue(RippleYPropertyKey, value); }
+            get { return (double) GetValue ( RippleYProperty ); }
+            private set { SetValue ( RippleYPropertyKey, value ); }
         }
 
         /// <summary>
-        ///   The DependencyProperty for the RecognizesAccessKey property. 
-        ///   Default Value: false 
-        /// </summary> 
+        ///   The DependencyProperty for the RecognizesAccessKey property.
+        ///   Default Value: false
+        /// </summary>
         public static readonly DependencyProperty RecognizesAccessKeyProperty =
             DependencyProperty.Register(
                 "RecognizesAccessKey", typeof(bool), typeof(Ripple),
                 new PropertyMetadata(default(bool)));
 
-        /// <summary> 
+        /// <summary>
         ///   Determine if Ripple should use AccessText in its style
-        /// </summary> 
+        /// </summary>
         public bool RecognizesAccessKey
         {
-            get { return (bool)GetValue(RecognizesAccessKeyProperty); }
-            set { SetValue(RecognizesAccessKeyProperty, value); }
+            get { return (bool) GetValue ( RecognizesAccessKeyProperty ); }
+            set { SetValue ( RecognizesAccessKeyProperty, value ); }
         }
 
-        public override void OnApplyTemplate()
+        public override void OnApplyTemplate ( )
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate ( );
 
-            VisualStateManager.GoToState(this, TemplateStateNormal, false);
+            VisualStateManager.GoToState ( this, TemplateStateNormal, false );
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs sizeChangedEventArgs)
+        private void OnSizeChanged ( object sender, SizeChangedEventArgs sizeChangedEventArgs )
         {
             var innerContent = (Content as FrameworkElement);
 
             double width, height;
 
-            if (RippleAssist.GetIsCentered(this) && innerContent != null)
+            if ( RippleAssist.GetIsCentered ( this ) && innerContent != null )
             {
                 width = innerContent.ActualWidth;
                 height = innerContent.ActualHeight;
@@ -212,7 +211,7 @@ namespace Dragablz.Themes
 
             var radius = Math.Sqrt(Math.Pow(width, 2) + Math.Pow(height, 2));
 
-            RippleSize = 2 * radius * RippleAssist.GetRippleSizeMultiplier(this);
+            RippleSize = 2 * radius * RippleAssist.GetRippleSizeMultiplier ( this );
         }
     }
 }

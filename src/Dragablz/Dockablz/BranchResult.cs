@@ -7,11 +7,11 @@ namespace Dragablz.Dockablz
         private readonly Branch _branch;
         private readonly TabablzControl _tabablzControl;
 
-        public BranchResult(Branch branch, TabablzControl tabablzControl)
+        public BranchResult ( Branch branch, TabablzControl tabablzControl )
         {
-            if (branch == null) throw new ArgumentNullException("branch");
-            if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
-            
+            if ( branch == null ) throw new ArgumentNullException ( "branch" );
+            if ( tabablzControl == null ) throw new ArgumentNullException ( "tabablzControl" );
+
             _branch = branch;
             _tabablzControl = tabablzControl;
         }

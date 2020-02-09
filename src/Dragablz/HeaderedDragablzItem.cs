@@ -5,18 +5,18 @@ namespace Dragablz
 {
     public class HeaderedDragablzItem : DragablzItem
     {
-        static HeaderedDragablzItem()
+        static HeaderedDragablzItem ( )
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(HeaderedDragablzItem), new FrameworkPropertyMetadata(typeof(HeaderedDragablzItem)));            
+            DefaultStyleKeyProperty.OverrideMetadata ( typeof ( HeaderedDragablzItem ), new FrameworkPropertyMetadata ( typeof ( HeaderedDragablzItem ) ) );
         }
-        
+
         public static readonly DependencyProperty HeaderContentProperty = DependencyProperty.Register(
             "HeaderContent", typeof (object), typeof (HeaderedDragablzItem), new PropertyMetadata(default(object)));
 
         public object HeaderContent
         {
-            get { return (object) GetValue(HeaderContentProperty); }
-            set { SetValue(HeaderContentProperty, value); }
+            get { return (object) GetValue ( HeaderContentProperty ); }
+            set { SetValue ( HeaderContentProperty, value ); }
         }
 
         public static readonly DependencyProperty HeaderContentStringFormatProperty = DependencyProperty.Register(
@@ -24,8 +24,8 @@ namespace Dragablz
 
         public string HeaderContentStringFormat
         {
-            get { return (string) GetValue(HeaderContentStringFormatProperty); }
-            set { SetValue(HeaderContentStringFormatProperty, value); }
+            get { return (string) GetValue ( HeaderContentStringFormatProperty ); }
+            set { SetValue ( HeaderContentStringFormatProperty, value ); }
         }
 
         public static readonly DependencyProperty HeaderContentTemplateProperty = DependencyProperty.Register(
@@ -33,8 +33,8 @@ namespace Dragablz
 
         public DataTemplate HeaderContentTemplate
         {
-            get { return (DataTemplate) GetValue(HeaderContentTemplateProperty); }
-            set { SetValue(HeaderContentTemplateProperty, value); }
+            get { return (DataTemplate) GetValue ( HeaderContentTemplateProperty ); }
+            set { SetValue ( HeaderContentTemplateProperty, value ); }
         }
 
         public static readonly DependencyProperty HeaderContentTemplateSelectorProperty = DependencyProperty.Register(
@@ -42,8 +42,8 @@ namespace Dragablz
 
         public DataTemplateSelector HeaderContentTemplateSelector
         {
-            get { return (DataTemplateSelector) GetValue(HeaderContentTemplateSelectorProperty); }
-            set { SetValue(HeaderContentTemplateSelectorProperty, value); }
-        }         
+            get { return (DataTemplateSelector) GetValue ( HeaderContentTemplateSelectorProperty ); }
+            set { SetValue ( HeaderContentTemplateSelectorProperty, value ); }
+        }
     }
 }

@@ -22,10 +22,10 @@ namespace Dragablz.Savablz
         /// <param name="ratio">The split ratio</param>
         public BranchState ( BranchItemState < TTabModel > firstChild, BranchItemState < TTabModel > secondChild, Orientation orientation, double ratio )
         {
-            FirstChild  = firstChild;
+            FirstChild = firstChild;
             SecondChild = secondChild;
             Orientation = orientation;
-            Ratio       = ratio;
+            Ratio = ratio;
         }
 
         /// <summary>

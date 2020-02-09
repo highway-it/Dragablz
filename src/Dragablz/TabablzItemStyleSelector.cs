@@ -11,15 +11,15 @@ namespace Dragablz
         private readonly Style _defaultHeaderItemStyle;
         private readonly Style _customHeaderItemStyle;
 
-        public TabablzItemStyleSelector(Style defaultHeaderItemStyle, Style customHeaderItemStyle)
+        public TabablzItemStyleSelector ( Style defaultHeaderItemStyle, Style customHeaderItemStyle )
         {
             _defaultHeaderItemStyle = defaultHeaderItemStyle;
             _customHeaderItemStyle = customHeaderItemStyle;
         }
 
-        public override Style SelectStyle(object item, DependencyObject container)
+        public override Style SelectStyle ( object item, DependencyObject container )
         {
-            if (item is TabItem) return _defaultHeaderItemStyle;
+            if ( item is TabItem ) return _defaultHeaderItemStyle;
 
             return _customHeaderItemStyle;
         }

@@ -3,19 +3,19 @@ using System.Windows;
 
 namespace Dragablz
 {
-    public delegate void ItemActionCallback(ItemActionCallbackArgs<TabablzControl> args);
+    public delegate void ItemActionCallback ( ItemActionCallbackArgs < TabablzControl > args );
 
-    public class ItemActionCallbackArgs<TOwner> where TOwner : FrameworkElement
+    public class ItemActionCallbackArgs < TOwner > where TOwner : FrameworkElement
     {
         private readonly Window _window;
         private readonly TOwner _owner;
         private readonly DragablzItem _dragablzItem;
 
-        public ItemActionCallbackArgs(Window window, TOwner owner, DragablzItem dragablzItem)
+        public ItemActionCallbackArgs ( Window window, TOwner owner, DragablzItem dragablzItem )
         {
-            if (window == null) throw new ArgumentNullException("window");
-            if (owner == null) throw new ArgumentNullException("owner");
-            if (dragablzItem == null) throw new ArgumentNullException("dragablzItem");
+            if ( window == null ) throw new ArgumentNullException ( "window" );
+            if ( owner == null ) throw new ArgumentNullException ( "owner" );
+            if ( dragablzItem == null ) throw new ArgumentNullException ( "dragablzItem" );
 
             _window = window;
             _owner = owner;
@@ -39,7 +39,7 @@ namespace Dragablz
 
         public bool IsCancelled { get; private set; }
 
-        public void Cancel()
+        public void Cancel ( )
         {
             IsCancelled = true;
         }

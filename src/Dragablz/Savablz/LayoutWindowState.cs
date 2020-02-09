@@ -25,13 +25,13 @@ namespace Dragablz.Savablz
         /// <param name="child">The root of this layout</param>
         public LayoutWindowState ( double x, double y, double width, double height, WindowState windowState, BranchItemState < TTabModel > child, TWindowSettings settings )
         {
-            X           = x;
-            Y           = y;
-            Width       = width;
-            Height      = height;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
             WindowState = windowState;
-            Child       = child;
-            Settings    = settings;
+            Child = child;
+            Settings = settings;
         }
 
         /// <summary>

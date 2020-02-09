@@ -6,15 +6,15 @@ namespace Dragablz.Core
     {
         private readonly DragablzItem _dragItem;
         private readonly double _dragablzItemsControlHorizontalOffset;
-        private readonly double _dragablzItemControlVerticalOffset; 
+        private readonly double _dragablzItemControlVerticalOffset;
         private readonly double _dragablzItemHorizontalOffset;
         private readonly double _dragablzItemVerticalOffset;
 
-        public TabHeaderDragStartInformation(
+        public TabHeaderDragStartInformation (
             DragablzItem dragItem,
-            double dragablzItemsControlHorizontalOffset, double dragablzItemControlVerticalOffset, double dragablzItemHorizontalOffset, double dragablzItemVerticalOffset)
+            double dragablzItemsControlHorizontalOffset, double dragablzItemControlVerticalOffset, double dragablzItemHorizontalOffset, double dragablzItemVerticalOffset )
         {
-            if (dragItem == null) throw new ArgumentNullException("dragItem");
+            if ( dragItem == null ) throw new ArgumentNullException ( "dragItem" );
 
             _dragItem = dragItem;
             _dragablzItemsControlHorizontalOffset = dragablzItemsControlHorizontalOffset;

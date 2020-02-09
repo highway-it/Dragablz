@@ -19,7 +19,7 @@
         public TabSetState ( TTabModel [ ] tabItems, int? selectedTabItemIndex )
         {
             SelectedTabItemIndex = selectedTabItemIndex;
-            TabItems             = tabItems;
+            TabItems = tabItems;
         }
 
         /// <summary>

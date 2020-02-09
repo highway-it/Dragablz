@@ -6,7 +6,7 @@ namespace Dragablz
         private readonly object _context;
         private readonly AddLocationHint _addLocationHint;
 
-        public MoveItemRequest(object item, object context, AddLocationHint addLocationHint)
+        public MoveItemRequest ( object item, object context, AddLocationHint addLocationHint )
         {
             _item = item;
             _context = context;

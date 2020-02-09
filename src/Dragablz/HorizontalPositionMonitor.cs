@@ -4,7 +4,7 @@ namespace Dragablz
 {
     public class HorizontalPositionMonitor : StackPositionMonitor
     {
-        public HorizontalPositionMonitor() : base(Orientation.Horizontal)
+        public HorizontalPositionMonitor ( ) : base ( Orientation.Horizontal )
         {
         }
     }
