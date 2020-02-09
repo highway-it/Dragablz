@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+
+    <PackageId>HIT.Dragablz</PackageId>
+    <Description>Fork of the Dragablz library for .NET Core with layout persistance support</Description>
+    <PackageTags>Dragablz</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Visible="false" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
