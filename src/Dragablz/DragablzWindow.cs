@@ -28,10 +28,10 @@ namespace Dragablz
         public const string WindowResizeThumbPartName = "PART_WindowResizeThumb";
         private readonly SerialDisposable _templateSubscription = new SerialDisposable ( );
 
-        public static RoutedCommand CloseWindowCommand = new RoutedCommand ( );
-        public static RoutedCommand RestoreWindowCommand = new RoutedCommand ( );
-        public static RoutedCommand MaximizeWindowCommand = new RoutedCommand ( );
-        public static RoutedCommand MinimizeWindowCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand CloseWindowCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand RestoreWindowCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand MaximizeWindowCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand MinimizeWindowCommand = new RoutedCommand ( );
 
         private const int ResizeMargin = 4;
         private Size _sizeWhenResizeBegan;
@@ -55,26 +55,26 @@ namespace Dragablz
 
         public DragablzWindow ( )
         {
-            AddHandler ( DragablzItem.DragStarted, new DragablzDragStartedEventHandler ( ItemDragStarted ), true );
-            AddHandler ( DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler ( ItemDragCompleted ), true );
+            AddHandler ( DragablzItem.DragStartedEvent, new DragablzDragStartedEventHandler ( ItemDragStarted ), true );
+            AddHandler ( DragablzItem.DragCompletedEvent, new DragablzDragCompletedEventHandler ( ItemDragCompleted ), true );
             CommandBindings.Add ( new CommandBinding ( CloseWindowCommand, CloseWindowExecuted ) );
             CommandBindings.Add ( new CommandBinding ( MaximizeWindowCommand, MaximizeWindowExecuted ) );
             CommandBindings.Add ( new CommandBinding ( MinimizeWindowCommand, MinimizeWindowExecuted ) );
             CommandBindings.Add ( new CommandBinding ( RestoreWindowCommand, RestoreWindowExecuted ) );
         }
 
-        private static readonly DependencyPropertyKey IsWindowBeingDraggedByTabPropertyKey =
+        private static readonly DependencyPropertyKey IsBeingDraggedByTabPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsBeingDraggedByTab", typeof (bool), typeof (DragablzWindow),
+                nameof(IsBeingDraggedByTab), typeof (bool), typeof (DragablzWindow),
                 new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty IsBeingDraggedByTabProperty =
-            IsWindowBeingDraggedByTabPropertyKey.DependencyProperty;
+            IsBeingDraggedByTabPropertyKey.DependencyProperty;
 
         public bool IsBeingDraggedByTab
         {
             get { return (bool) GetValue ( IsBeingDraggedByTabProperty ); }
-            private set { SetValue ( IsWindowBeingDraggedByTabPropertyKey, value ); }
+            private set { SetValue ( IsBeingDraggedByTabPropertyKey, value ); }
         }
 
         private void ItemDragCompleted ( object sender, DragablzDragCompletedEventArgs e )

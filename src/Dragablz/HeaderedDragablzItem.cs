@@ -11,7 +11,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderContentProperty = DependencyProperty.Register(
-            "HeaderContent", typeof (object), typeof (HeaderedDragablzItem), new PropertyMetadata(default(object)));
+            nameof(HeaderContent), typeof (object), typeof (HeaderedDragablzItem), new PropertyMetadata(default(object)));
 
         public object HeaderContent
         {
@@ -20,7 +20,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderContentStringFormatProperty = DependencyProperty.Register(
-            "HeaderContentStringFormat", typeof (string), typeof (HeaderedDragablzItem), new PropertyMetadata(default(string)));
+            nameof(HeaderContentStringFormat), typeof (string), typeof (HeaderedDragablzItem), new PropertyMetadata(default(string)));
 
         public string HeaderContentStringFormat
         {
@@ -29,7 +29,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderContentTemplateProperty = DependencyProperty.Register(
-            "HeaderContentTemplate", typeof (DataTemplate), typeof (HeaderedDragablzItem), new PropertyMetadata(default(DataTemplate)));
+            nameof(HeaderContentTemplate), typeof (DataTemplate), typeof (HeaderedDragablzItem), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate HeaderContentTemplate
         {
@@ -38,7 +38,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderContentTemplateSelectorProperty = DependencyProperty.Register(
-            "HeaderContentTemplateSelector", typeof (DataTemplateSelector), typeof (HeaderedDragablzItem), new PropertyMetadata(default(DataTemplateSelector)));
+            nameof(HeaderContentTemplateSelector), typeof (DataTemplateSelector), typeof (HeaderedDragablzItem), new PropertyMetadata(default(DataTemplateSelector)));
 
         public DataTemplateSelector HeaderContentTemplateSelector
         {

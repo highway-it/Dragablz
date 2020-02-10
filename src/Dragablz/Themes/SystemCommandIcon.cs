@@ -19,7 +19,7 @@ namespace Dragablz.Themes
         }
 
         public static readonly DependencyProperty SystemCommandTypeProperty = DependencyProperty.Register(
-            "SystemCommandType", typeof (SystemCommandType), typeof (SystemCommandIcon), new PropertyMetadata(default(SystemCommandType)));
+            nameof(SystemCommandType), typeof (SystemCommandType), typeof (SystemCommandIcon), new PropertyMetadata(default(SystemCommandType)));
 
         public SystemCommandType SystemCommandType
         {

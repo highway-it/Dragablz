@@ -12,7 +12,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HorizontalPopoutGraceProperty = DependencyProperty.Register(
-            "HorizontalPopoutGrace", typeof (double), typeof (InterTabController), new PropertyMetadata(8.0));
+            nameof(HorizontalPopoutGrace), typeof (double), typeof (InterTabController), new PropertyMetadata(8.0));
 
         public double HorizontalPopoutGrace
         {
@@ -21,7 +21,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty VerticalPopoutGraceProperty = DependencyProperty.Register(
-            "VerticalPopoutGrace", typeof (double), typeof (InterTabController), new PropertyMetadata(8.0));
+            nameof(VerticalPopoutGrace), typeof (double), typeof (InterTabController), new PropertyMetadata(8.0));
 
         public double VerticalPopoutGrace
         {
@@ -30,7 +30,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty MoveWindowWithSolitaryTabsProperty = DependencyProperty.Register(
-            "MoveWindowWithSolitaryTabs", typeof (bool), typeof (InterTabController), new PropertyMetadata(true));
+            nameof(MoveWindowWithSolitaryTabs), typeof (bool), typeof (InterTabController), new PropertyMetadata(true));
 
         public bool MoveWindowWithSolitaryTabs
         {
@@ -39,7 +39,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty InterTabClientProperty = DependencyProperty.Register(
-            "InterTabClient", typeof (IInterTabClient), typeof (InterTabController),
+            nameof(InterTabClient), typeof (IInterTabClient), typeof (InterTabController),
             new PropertyMetadata(new DefaultInterTabClient ( )));
 
         public IInterTabClient InterTabClient

@@ -27,14 +27,14 @@ namespace Dragablz
             ItemContainerGenerator.ItemsChanged += ItemContainerGeneratorOnItemsChanged;
             AddHandler ( DragablzItem.XChangedEvent, new RoutedPropertyChangedEventHandler < double > ( ItemXChanged ) );
             AddHandler ( DragablzItem.YChangedEvent, new RoutedPropertyChangedEventHandler < double > ( ItemYChanged ) );
-            AddHandler ( DragablzItem.DragDelta, new DragablzDragDeltaEventHandler ( ItemDragDelta ) );
-            AddHandler ( DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler ( ItemDragCompleted ) );
-            AddHandler ( DragablzItem.DragStarted, new DragablzDragStartedEventHandler ( ItemDragStarted ) );
+            AddHandler ( DragablzItem.DragDeltaEvent, new DragablzDragDeltaEventHandler ( ItemDragDelta ) );
+            AddHandler ( DragablzItem.DragCompletedEvent, new DragablzDragCompletedEventHandler ( ItemDragCompleted ) );
+            AddHandler ( DragablzItem.DragStartedEvent, new DragablzDragStartedEventHandler ( ItemDragStarted ) );
             AddHandler ( DragablzItem.MouseDownWithinEvent, new DragablzItemEventHandler ( ItemMouseDownWithinHandlerTarget ) );
         }
 
         public static readonly DependencyProperty FixedItemCountProperty = DependencyProperty.Register(
-            "FixedItemCount", typeof (int), typeof (DragablzItemsControl), new PropertyMetadata(default(int)));
+            nameof(FixedItemCount), typeof (int), typeof (DragablzItemsControl), new PropertyMetadata(default(int)));
 
         public int FixedItemCount
         {
@@ -68,7 +68,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty ItemsOrganiserProperty = DependencyProperty.Register(
-            "ItemsOrganiser", typeof (IItemsOrganiser), typeof (DragablzItemsControl), new PropertyMetadata(default(IItemsOrganiser)));
+            nameof(ItemsOrganiser), typeof (IItemsOrganiser), typeof (DragablzItemsControl), new PropertyMetadata(default(IItemsOrganiser)));
 
         public IItemsOrganiser ItemsOrganiser
         {
@@ -77,7 +77,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty PositionMonitorProperty = DependencyProperty.Register(
-            "PositionMonitor", typeof (PositionMonitor), typeof (DragablzItemsControl), new PropertyMetadata(default(PositionMonitor)));
+            nameof(PositionMonitor), typeof (PositionMonitor), typeof (DragablzItemsControl), new PropertyMetadata(default(PositionMonitor)));
 
         public PositionMonitor PositionMonitor
         {
@@ -87,7 +87,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey ItemsPresenterWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "ItemsPresenterWidth", typeof(double), typeof (DragablzItemsControl),
+                nameof(ItemsPresenterWidth), typeof(double), typeof (DragablzItemsControl),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty ItemsPresenterWidthProperty =
@@ -101,7 +101,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey ItemsPresenterHeightPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "ItemsPresenterHeight", typeof (double), typeof (DragablzItemsControl),
+                nameof(ItemsPresenterHeight), typeof (double), typeof (DragablzItemsControl),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty ItemsPresenterHeightProperty =
@@ -248,7 +248,7 @@ namespace Dragablz
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException ( );
+                    throw new ArgumentOutOfRangeException ( nameof ( AddLocationHint ) );
             }
 
             //TODO might not be too great for perf on larger lists

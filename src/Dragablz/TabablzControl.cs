@@ -40,12 +40,12 @@ namespace Dragablz
         /// <summary>
         /// Routed command which can be used to close a tab.
         /// </summary>
-        public static RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(TabablzControl));
+        public static readonly RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(TabablzControl));
 
         /// <summary>
         /// Routed command which can be used to add a new tab.  See <see cref="NewItemFactory" />.
         /// </summary>
-        public static RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(TabablzControl));
+        public static readonly RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(TabablzControl));
 
         private static readonly HashSet < TabablzControl > LoadedInstances = new HashSet < TabablzControl > ( );
         private static readonly HashSet < TabablzControl > VisibleInstances = new HashSet < TabablzControl > ( );
@@ -70,10 +70,10 @@ namespace Dragablz
         /// </summary>
         public TabablzControl ( )
         {
-            AddHandler ( DragablzItem.DragStarted, new DragablzDragStartedEventHandler ( ItemDragStarted ), true );
-            AddHandler ( DragablzItem.PreviewDragDelta, new DragablzDragDeltaEventHandler ( PreviewItemDragDelta ), true );
-            AddHandler ( DragablzItem.DragDelta, new DragablzDragDeltaEventHandler ( ItemDragDelta ), true );
-            AddHandler ( DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler ( ItemDragCompleted ), true );
+            AddHandler ( DragablzItem.DragStartedEvent, new DragablzDragStartedEventHandler ( ItemDragStarted ), true );
+            AddHandler ( DragablzItem.PreviewDragDeltaEvent, new DragablzDragDeltaEventHandler ( PreviewItemDragDelta ), true );
+            AddHandler ( DragablzItem.DragDeltaEvent, new DragablzDragDeltaEventHandler ( ItemDragDelta ), true );
+            AddHandler ( DragablzItem.DragCompletedEvent, new DragablzDragCompletedEventHandler ( ItemDragCompleted ), true );
             CommandBindings.Add ( new CommandBinding ( AddItemCommand, AddItemHandler ) );
 
             Loaded += OnLoaded;
@@ -82,7 +82,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty CustomHeaderItemStyleProperty = DependencyProperty.Register(
-            "CustomHeaderItemStyle", typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
+            nameof(CustomHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
 
         /// <summary>
         /// Helper method which returns all the currently loaded instances.
@@ -169,7 +169,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty CustomHeaderItemTemplateProperty = DependencyProperty.Register(
-            "CustomHeaderItemTemplate", typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
+            nameof(CustomHeaderItemTemplate), typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
 
         [Obsolete ( "Prefer HeaderItemTemplate" )]
         public DataTemplate CustomHeaderItemTemplate
@@ -179,7 +179,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty DefaultHeaderItemStyleProperty = DependencyProperty.Register(
-            "DefaultHeaderItemStyle", typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
+            nameof(DefaultHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
 
         [Obsolete]
         public Style DefaultHeaderItemStyle
@@ -189,9 +189,9 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty AdjacentHeaderItemOffsetProperty = DependencyProperty.Register(
-            "AdjacentHeaderItemOffset", typeof (double), typeof (TabablzControl), new PropertyMetadata(default(double), AdjacentHeaderItemOffsetPropertyChangedCallback));
+            nameof(AdjacentHeaderItemOffset), typeof (double), typeof (TabablzControl), new PropertyMetadata(default(double), OnAdjacentHeaderItemOffsetChanged));
 
-        private static void AdjacentHeaderItemOffsetPropertyChangedCallback ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
+        private static void OnAdjacentHeaderItemOffsetChanged ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
         {
             dependencyObject.SetValue ( HeaderItemsOrganiserProperty, new HorizontalOrganiser ( (double) dependencyPropertyChangedEventArgs.NewValue ) );
         }
@@ -203,7 +203,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderItemsOrganiserProperty = DependencyProperty.Register(
-            "HeaderItemsOrganiser", typeof (IItemsOrganiser), typeof (TabablzControl), new PropertyMetadata(new HorizontalOrganiser ( )));
+            nameof(HeaderItemsOrganiser), typeof (IItemsOrganiser), typeof (TabablzControl), new PropertyMetadata(new HorizontalOrganiser ( )));
 
         public IItemsOrganiser HeaderItemsOrganiser
         {
@@ -212,7 +212,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderMemberPathProperty = DependencyProperty.Register(
-            "HeaderMemberPath", typeof (string), typeof (TabablzControl), new PropertyMetadata(default(string)));
+            nameof(HeaderMemberPath), typeof (string), typeof (TabablzControl), new PropertyMetadata(default(string)));
 
         public string HeaderMemberPath
         {
@@ -221,7 +221,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderItemTemplateProperty = DependencyProperty.Register(
-            "HeaderItemTemplate", typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
+            nameof(HeaderItemTemplate), typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate HeaderItemTemplate
         {
@@ -230,7 +230,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderPrefixContentProperty = DependencyProperty.Register(
-            "HeaderPrefixContent", typeof (object), typeof (TabablzControl), new PropertyMetadata(default(object)));
+            nameof(HeaderPrefixContent), typeof (object), typeof (TabablzControl), new PropertyMetadata(default(object)));
 
         public object HeaderPrefixContent
         {
@@ -239,7 +239,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderPrefixContentStringFormatProperty = DependencyProperty.Register(
-            "HeaderPrefixContentStringFormat", typeof (string), typeof (TabablzControl), new PropertyMetadata(default(string)));
+            nameof(HeaderPrefixContentStringFormat), typeof (string), typeof (TabablzControl), new PropertyMetadata(default(string)));
 
         public string HeaderPrefixContentStringFormat
         {
@@ -248,7 +248,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderPrefixContentTemplateProperty = DependencyProperty.Register(
-            "HeaderPrefixContentTemplate", typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
+            nameof(HeaderPrefixContentTemplate), typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate HeaderPrefixContentTemplate
         {
@@ -257,7 +257,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderPrefixContentTemplateSelectorProperty = DependencyProperty.Register(
-            "HeaderPrefixContentTemplateSelector", typeof (DataTemplateSelector), typeof (TabablzControl), new PropertyMetadata(default(DataTemplateSelector)));
+            nameof(HeaderPrefixContentTemplateSelector), typeof (DataTemplateSelector), typeof (TabablzControl), new PropertyMetadata(default(DataTemplateSelector)));
 
         public DataTemplateSelector HeaderPrefixContentTemplateSelector
         {
@@ -266,7 +266,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderSuffixContentProperty = DependencyProperty.Register(
-                    "HeaderSuffixContent", typeof(object), typeof(TabablzControl), new PropertyMetadata(default(object)));
+                    nameof(HeaderSuffixContent), typeof(object), typeof(TabablzControl), new PropertyMetadata(default(object)));
 
         public object HeaderSuffixContent
         {
@@ -275,7 +275,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderSuffixContentStringFormatProperty = DependencyProperty.Register(
-            "HeaderSuffixContentStringFormat", typeof(string), typeof(TabablzControl), new PropertyMetadata(default(string)));
+            nameof(HeaderSuffixContentStringFormat), typeof(string), typeof(TabablzControl), new PropertyMetadata(default(string)));
 
         public string HeaderSuffixContentStringFormat
         {
@@ -284,7 +284,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderSuffixContentTemplateProperty = DependencyProperty.Register(
-            "HeaderSuffixContentTemplate", typeof(DataTemplate), typeof(TabablzControl), new PropertyMetadata(default(DataTemplate)));
+            nameof(HeaderSuffixContentTemplate), typeof(DataTemplate), typeof(TabablzControl), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate HeaderSuffixContentTemplate
         {
@@ -293,7 +293,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty HeaderSuffixContentTemplateSelectorProperty = DependencyProperty.Register(
-            "HeaderSuffixContentTemplateSelector", typeof(DataTemplateSelector), typeof(TabablzControl), new PropertyMetadata(default(DataTemplateSelector)));
+            nameof(HeaderSuffixContentTemplateSelector), typeof(DataTemplateSelector), typeof(TabablzControl), new PropertyMetadata(default(DataTemplateSelector)));
 
         public DataTemplateSelector HeaderSuffixContentTemplateSelector
         {
@@ -302,7 +302,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty ShowDefaultCloseButtonProperty = DependencyProperty.Register(
-            "ShowDefaultCloseButton", typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
+            nameof(ShowDefaultCloseButton), typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Indicates whether a default close button should be displayed.  If manually templating the tab header content the close command
@@ -315,7 +315,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty ShowDefaultAddButtonProperty = DependencyProperty.Register(
-            "ShowDefaultAddButton", typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
+            nameof(ShowDefaultAddButton), typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Indicates whether a default add button should be displayed.  Alternately an add button
@@ -329,7 +329,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty IsHeaderPanelVisibleProperty = DependencyProperty.Register(
-            "IsHeaderPanelVisible", typeof(bool), typeof(TabablzControl), new PropertyMetadata(true));
+            nameof(IsHeaderPanelVisible), typeof(bool), typeof(TabablzControl), new PropertyMetadata(true));
 
         /// <summary>
         /// Indicates wither the heaeder panel is visible.  Default is <c>true</c>.
@@ -341,7 +341,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty AddLocationHintProperty = DependencyProperty.Register(
-            "AddLocationHint", typeof (AddLocationHint), typeof (TabablzControl), new PropertyMetadata(AddLocationHint.Last));
+            nameof(AddLocationHint), typeof (AddLocationHint), typeof (TabablzControl), new PropertyMetadata(AddLocationHint.Last));
 
         /// <summary>
         /// Gets or sets the location to add new tab items in the header.
@@ -357,7 +357,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty FixedHeaderCountProperty = DependencyProperty.Register(
-            "FixedHeaderCount", typeof (int), typeof (TabablzControl), new PropertyMetadata(default(int)));
+            nameof(FixedHeaderCount), typeof (int), typeof (TabablzControl), new PropertyMetadata(default(int)));
 
         /// <summary>
         /// Allows a the first adjacent tabs to be fixed (no dragging, and default close button will not show).
@@ -369,9 +369,9 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty InterTabControllerProperty = DependencyProperty.Register(
-            "InterTabController", typeof (InterTabController), typeof (TabablzControl), new PropertyMetadata(null, InterTabControllerPropertyChangedCallback));
+            nameof(InterTabController), typeof (InterTabController), typeof (TabablzControl), new PropertyMetadata(null, OnInterTabControllerChanged));
 
-        private static void InterTabControllerPropertyChangedCallback ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
+        private static void OnInterTabControllerChanged ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
         {
             var instance = (TabablzControl)dependencyObject;
             if ( dependencyPropertyChangedEventArgs.OldValue != null )
@@ -394,7 +394,7 @@ namespace Dragablz
         /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand" />.
         /// </summary>
         public static readonly DependencyProperty NewItemFactoryProperty = DependencyProperty.Register(
-            "NewItemFactory", typeof (Func < object >), typeof (TabablzControl), new PropertyMetadata(default(Func < object >)));
+            nameof(NewItemFactory), typeof (Func < object >), typeof (TabablzControl), new PropertyMetadata(default(Func < object >)));
 
         /// <summary>
         /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand" />.
@@ -407,7 +407,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey IsEmptyPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsEmpty", typeof (bool), typeof (TabablzControl),
+                nameof(IsEmpty), typeof (bool), typeof (TabablzControl),
                 new PropertyMetadata(true, OnIsEmptyChanged));
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace Dragablz
         /// </summary>
         public static readonly RoutedEvent IsEmptyChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "IsEmptyChanged",
+                nameof(IsEmptyChanged),
                 RoutingStrategy.Bubble,
                 typeof (RoutedPropertyChangedEventHandler < bool >),
                 typeof (TabablzControl));
@@ -459,7 +459,7 @@ namespace Dragablz
         /// Optionally allows a close item hook to be bound in.  If this propety is provided, the func must return true for the close to continue.
         /// </summary>
         public static readonly DependencyProperty ClosingItemCallbackProperty = DependencyProperty.Register(
-            "ClosingItemCallback", typeof(ItemActionCallback), typeof(TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
+            nameof(ClosingItemCallback), typeof(ItemActionCallback), typeof(TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
 
         /// <summary>
         /// Optionally allows a close item hook to be bound in.  If this propety is provided, the func must return true for the close to continue.
@@ -476,7 +476,7 @@ namespace Dragablz
         /// this behaviour on a per tab item basis by providing <see cref="ConsolidatingOrphanedItemCallback" />.
         /// </summary>
         public static readonly DependencyProperty ConsolidateOrphanedItemsProperty = DependencyProperty.Register(
-            "ConsolidateOrphanedItems", typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
+            nameof(ConsolidateOrphanedItems), typeof (bool), typeof (TabablzControl), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Set to <c>true</c> to have tabs automatically be moved to another tab is a window is closed, so that they arent lost.
@@ -495,7 +495,7 @@ namespace Dragablz
         /// instance.
         /// </summary>
         public static readonly DependencyProperty ConsolidatingOrphanedItemCallbackProperty = DependencyProperty.Register(
-            "ConsolidatingOrphanedItemCallback", typeof (ItemActionCallback), typeof (TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
+            nameof(ConsolidatingOrphanedItemCallback), typeof (ItemActionCallback), typeof (TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
 
         /// <summary>
         /// Assuming <see cref="ConsolidateOrphanedItems" /> is set to <c>true</c>, consolidation of individual
@@ -510,7 +510,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey IsDraggingWindowPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsDraggingWindow", typeof (bool), typeof (TabablzControl),
+                nameof(IsDraggingWindow), typeof (bool), typeof (TabablzControl),
                 new PropertyMetadata(default(bool), OnIsDraggingWindowChanged));
 
         /// <summary>
@@ -535,7 +535,7 @@ namespace Dragablz
         /// </summary>
         public static readonly RoutedEvent IsDraggingWindowChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "IsDraggingWindowChanged",
+                nameof(IsDraggingWindowChanged),
                 RoutingStrategy.Bubble,
                 typeof (RoutedPropertyChangedEventHandler < bool >),
                 typeof (TabablzControl));
@@ -588,7 +588,7 @@ namespace Dragablz
         /// Provide a hint for how the header should size itself if there are no tabs left (and a Window is still open).
         /// </summary>
         public static readonly DependencyProperty EmptyHeaderSizingHintProperty = DependencyProperty.Register(
-            "EmptyHeaderSizingHint", typeof (EmptyHeaderSizingHint), typeof (TabablzControl), new PropertyMetadata(default(EmptyHeaderSizingHint)));
+            nameof(EmptyHeaderSizingHint), typeof (EmptyHeaderSizingHint), typeof (TabablzControl), new PropertyMetadata(default(EmptyHeaderSizingHint)));
 
         /// <summary>
         /// Provide a hint for how the header should size itself if there are no tabs left (and a Window is still open).

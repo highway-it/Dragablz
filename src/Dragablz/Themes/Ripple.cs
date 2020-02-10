@@ -79,7 +79,7 @@ namespace Dragablz.Themes
         }
 
         public static readonly DependencyProperty FeedbackProperty = DependencyProperty.Register(
-            "Feedback", typeof(Brush), typeof(Ripple), new PropertyMetadata(default(Brush)));
+            nameof(Feedback), typeof(Brush), typeof(Ripple), new PropertyMetadata(default(Brush)));
 
         public Brush Feedback
         {
@@ -93,9 +93,7 @@ namespace Dragablz.Themes
 
             if ( RippleAssist.GetIsCentered ( this ) )
             {
-                var innerContent = Content as FrameworkElement;
-
-                if ( innerContent != null )
+                if ( Content is FrameworkElement innerContent )
                 {
                     var position = innerContent.TransformToAncestor(this)
                         .Transform(new Point(0, 0));
@@ -124,7 +122,7 @@ namespace Dragablz.Themes
 
         private static readonly DependencyPropertyKey RippleSizePropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "RippleSize", typeof(double), typeof(Ripple),
+                nameof(RippleSize), typeof(double), typeof(Ripple),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty RippleSizeProperty =
@@ -138,7 +136,7 @@ namespace Dragablz.Themes
 
         private static readonly DependencyPropertyKey RippleXPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "RippleX", typeof(double), typeof(Ripple),
+                nameof(RippleX), typeof(double), typeof(Ripple),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty RippleXProperty =
@@ -152,7 +150,7 @@ namespace Dragablz.Themes
 
         private static readonly DependencyPropertyKey RippleYPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "RippleY", typeof(double), typeof(Ripple),
+                nameof(RippleY), typeof(double), typeof(Ripple),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty RippleYProperty =
@@ -170,7 +168,7 @@ namespace Dragablz.Themes
         /// </summary>
         public static readonly DependencyProperty RecognizesAccessKeyProperty =
             DependencyProperty.Register(
-                "RecognizesAccessKey", typeof(bool), typeof(Ripple),
+                nameof(RecognizesAccessKey), typeof(bool), typeof(Ripple),
                 new PropertyMetadata(default(bool)));
 
         /// <summary>
@@ -191,11 +189,9 @@ namespace Dragablz.Themes
 
         private void OnSizeChanged ( object sender, SizeChangedEventArgs sizeChangedEventArgs )
         {
-            var innerContent = Content as FrameworkElement;
-
             double width, height;
 
-            if ( RippleAssist.GetIsCentered ( this ) && innerContent != null )
+            if ( RippleAssist.GetIsCentered ( this ) && Content is FrameworkElement innerContent )
             {
                 width = innerContent.ActualWidth;
                 height = innerContent.ActualHeight;

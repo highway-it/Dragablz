@@ -9,6 +9,7 @@ namespace Dragablz.Core
 {
     internal static class Native
     {
+        [Serializable]
         [StructLayout ( LayoutKind.Sequential )]
         public struct POINT
         {
@@ -21,6 +22,7 @@ namespace Dragablz.Core
             }
         }
 
+        [Serializable]
         [StructLayout ( LayoutKind.Sequential )]
         public struct RECT
         {

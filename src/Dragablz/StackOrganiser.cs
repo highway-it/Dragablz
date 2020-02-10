@@ -46,8 +46,6 @@ namespace Dragablz
             }
         }
 
-        #region LocationInfo
-
         private class LocationInfo
         {
             public LocationInfo ( DragablzItem item, double start, double mid, double end )
@@ -66,8 +64,6 @@ namespace Dragablz
 
             public DragablzItem Item { get; }
         }
-
-        #endregion LocationInfo
 
         public virtual Orientation Orientation => _orientation;
 

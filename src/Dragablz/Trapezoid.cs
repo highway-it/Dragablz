@@ -17,7 +17,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty PenBrushProperty = DependencyProperty.Register(
-            "PenBrush", typeof (Brush), typeof (Trapezoid), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent), FrameworkPropertyMetadataOptions.AffectsMeasure));
+            nameof(PenBrush), typeof (Brush), typeof (Trapezoid), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent), FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public Brush PenBrush
         {
@@ -26,7 +26,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty LongBasePenBrushProperty = DependencyProperty.Register(
-            "LongBasePenBrush", typeof(Brush), typeof(Trapezoid), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent), FrameworkPropertyMetadataOptions.AffectsMeasure));
+            nameof(LongBasePenBrush), typeof(Brush), typeof(Trapezoid), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent), FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public Brush LongBasePenBrush
         {
@@ -35,7 +35,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty PenThicknessProperty = DependencyProperty.Register(
-            "PenThickness", typeof (double), typeof (Trapezoid), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsMeasure));
+            nameof(PenThickness), typeof (double), typeof (Trapezoid), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public double PenThickness
         {

@@ -34,13 +34,13 @@ namespace Dragablz.Dockablz
         private readonly IDictionary < DropZoneLocation, DropZone > _dropZones = new Dictionary < DropZoneLocation, DropZone > ( );
         private static Tuple < Layout, DropZone > _currentlyOfferedDropZone;
 
-        public static RoutedCommand UnfloatItemCommand = new RoutedCommand ( );
-        public static RoutedCommand MaximiseFloatingItem = new RoutedCommand ( );
-        public static RoutedCommand RestoreFloatingItem = new RoutedCommand ( );
-        public static RoutedCommand CloseFloatingItem = new RoutedCommand ( );
-        public static RoutedCommand TileFloatingItemsCommand = new RoutedCommand ( );
-        public static RoutedCommand TileFloatingItemsVerticallyCommand = new RoutedCommand ( );
-        public static RoutedCommand TileFloatingItemsHorizontallyCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand UnfloatItemCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand MaximiseFloatingItem = new RoutedCommand ( );
+        public static readonly RoutedCommand RestoreFloatingItem = new RoutedCommand ( );
+        public static readonly RoutedCommand CloseFloatingItem = new RoutedCommand ( );
+        public static readonly RoutedCommand TileFloatingItemsCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand TileFloatingItemsVerticallyCommand = new RoutedCommand ( );
+        public static readonly RoutedCommand TileFloatingItemsHorizontallyCommand = new RoutedCommand ( );
 
         private readonly DragablzItemsControl _floatingItems;
         private static bool _isDragOpWireUpPending;
@@ -50,9 +50,9 @@ namespace Dragablz.Dockablz
         {
             DefaultStyleKeyProperty.OverrideMetadata ( typeof ( Layout ), new FrameworkPropertyMetadata ( typeof ( Layout ) ) );
 
-            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.DragStarted, new DragablzDragStartedEventHandler ( ItemDragStarted ) );
-            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.PreviewDragDelta, new DragablzDragDeltaEventHandler ( PreviewItemDragDelta ), true );
-            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler ( ItemDragCompleted ) );
+            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.DragStartedEvent, new DragablzDragStartedEventHandler ( ItemDragStarted ) );
+            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.PreviewDragDeltaEvent, new DragablzDragDeltaEventHandler ( PreviewItemDragDelta ), true );
+            EventManager.RegisterClassHandler ( typeof ( DragablzItem ), DragablzItem.DragCompletedEvent, new DragablzDragCompletedEventHandler ( ItemDragCompleted ) );
         }
 
         public Layout ( )
@@ -199,7 +199,7 @@ namespace Dragablz.Dockablz
         public string Partition { get; set; }
 
         public static readonly DependencyProperty InterLayoutClientProperty = DependencyProperty.Register(
-            "InterLayoutClient", typeof (IInterLayoutClient), typeof (Layout), new PropertyMetadata(new DefaultInterLayoutClient ( )));
+            nameof(InterLayoutClient), typeof (IInterLayoutClient), typeof (Layout), new PropertyMetadata(new DefaultInterLayoutClient ( )));
 
         public IInterLayoutClient InterLayoutClient
         {
@@ -220,7 +220,7 @@ namespace Dragablz.Dockablz
 
         private static readonly DependencyPropertyKey IsParticipatingInDragPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsParticipatingInDrag", typeof (bool), typeof (Layout),
+                nameof(IsParticipatingInDrag), typeof (bool), typeof (Layout),
                 new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty IsParticipatingInDragProperty =
@@ -233,7 +233,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty BranchTemplateProperty = DependencyProperty.Register(
-            "BranchTemplate", typeof (DataTemplate), typeof (Layout), new PropertyMetadata(default(DataTemplate)));
+            nameof(BranchTemplate), typeof (DataTemplate), typeof (Layout), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate BranchTemplate
         {
@@ -242,7 +242,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty IsFloatDropZoneEnabledProperty = DependencyProperty.Register(
-            "IsFloatDropZoneEnabled", typeof (bool), typeof (Layout), new PropertyMetadata(default(bool)));
+            nameof(IsFloatDropZoneEnabled), typeof (bool), typeof (Layout), new PropertyMetadata(default(bool)));
 
         public bool IsFloatDropZoneEnabled
         {
@@ -254,7 +254,7 @@ namespace Dragablz.Dockablz
         /// Defines a margin for the container which hosts all floating items.
         /// </summary>
         public static readonly DependencyProperty FloatingItemsContainerMarginProperty = DependencyProperty.Register(
-            "FloatingItemsContainerMargin", typeof (Thickness), typeof (Layout), new PropertyMetadata(default(Thickness)));
+            nameof(FloatingItemsContainerMargin), typeof (Thickness), typeof (Layout), new PropertyMetadata(default(Thickness)));
 
         /// <summary>
         /// Defines a margin for the container which hosts all floating items.
@@ -271,7 +271,7 @@ namespace Dragablz.Dockablz
         public ItemCollection FloatingItems => _floatingItems.Items;
 
         public static readonly DependencyProperty FloatingItemsSourceProperty = DependencyProperty.Register(
-            "FloatingItemsSource", typeof (IEnumerable), typeof (Layout), new PropertyMetadata(default(IEnumerable)));
+            nameof(FloatingItemsSource), typeof (IEnumerable), typeof (Layout), new PropertyMetadata(default(IEnumerable)));
 
         /// <summary>
         /// Floating items, such as tool/MDI windows, which will sit above the <see cref="Content" />.
@@ -283,7 +283,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemsControlStyleProperty = DependencyProperty.Register(
-            "FloatingItemsControlStyle", typeof (Style), typeof (Layout), new PropertyMetadata((Style)null));
+            nameof(FloatingItemsControlStyle), typeof (Style), typeof (Layout), new PropertyMetadata((Style)null));
 
         /// <summary>
         /// The style to be applied to the <see cref="DragablzItemsControl" /> which is used to display floating items.
@@ -296,7 +296,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemContainerStyleProperty = DependencyProperty.Register(
-            "FloatingItemContainerStyle", typeof (Style), typeof (Layout), new PropertyMetadata(default(Style)));
+            nameof(FloatingItemContainerStyle), typeof (Style), typeof (Layout), new PropertyMetadata(default(Style)));
 
         public Style FloatingItemContainerStyle
         {
@@ -305,7 +305,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemContainerStyleSelectorProperty = DependencyProperty.Register(
-            "FloatingItemContainerStyleSelector", typeof (StyleSelector), typeof (Layout), new PropertyMetadata(new CouldBeHeaderedStyleSelector ( )));
+            nameof(FloatingItemContainerStyleSelector), typeof (StyleSelector), typeof (Layout), new PropertyMetadata(new CouldBeHeaderedStyleSelector ( )));
 
         public StyleSelector FloatingItemContainerStyleSelector
         {
@@ -314,7 +314,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemTemplateProperty = DependencyProperty.Register(
-            "FloatingItemTemplate", typeof (DataTemplate), typeof (Layout), new PropertyMetadata(default(DataTemplate)));
+            nameof(FloatingItemTemplate), typeof (DataTemplate), typeof (Layout), new PropertyMetadata(default(DataTemplate)));
 
         public DataTemplate FloatingItemTemplate
         {
@@ -323,7 +323,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemTemplateSelectorProperty = DependencyProperty.Register(
-            "FloatingItemTemplateSelector", typeof (DataTemplateSelector), typeof (Layout), new PropertyMetadata(default(DataTemplateSelector)));
+            nameof(FloatingItemTemplateSelector), typeof (DataTemplateSelector), typeof (Layout), new PropertyMetadata(default(DataTemplateSelector)));
 
         public DataTemplateSelector FloatingItemTemplateSelector
         {
@@ -332,7 +332,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemHeaderMemberPathProperty = DependencyProperty.Register(
-            "FloatingItemHeaderMemberPath", typeof (string), typeof (Layout), new PropertyMetadata(default(string)));
+            nameof(FloatingItemHeaderMemberPath), typeof (string), typeof (Layout), new PropertyMetadata(default(string)));
 
         public string FloatingItemHeaderMemberPath
         {
@@ -341,7 +341,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FloatingItemDisplayMemberPathProperty = DependencyProperty.Register(
-            "FloatingItemDisplayMemberPath", typeof (string), typeof (Layout), new PropertyMetadata(default(string)));
+            nameof(FloatingItemDisplayMemberPath), typeof (string), typeof (Layout), new PropertyMetadata(default(string)));
 
         public string FloatingItemDisplayMemberPath
         {
@@ -350,7 +350,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty ClosingFloatingItemCallbackProperty = DependencyProperty.Register(
-            "ClosingFloatingItemCallback", typeof (ClosingFloatingItemCallback), typeof (Layout), new PropertyMetadata(default(ClosingFloatingItemCallback)));
+            nameof(ClosingFloatingItemCallback), typeof (ClosingFloatingItemCallback), typeof (Layout), new PropertyMetadata(default(ClosingFloatingItemCallback)));
 
         public ClosingFloatingItemCallback ClosingFloatingItemCallback
         {
@@ -358,17 +358,17 @@ namespace Dragablz.Dockablz
             set { SetValue ( ClosingFloatingItemCallbackProperty, value ); }
         }
 
-        public static readonly DependencyPropertyKey KeyIsFloatingInLayoutPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        public static readonly DependencyPropertyKey IsFloatingInLayoutPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "IsFloatingInLayout", typeof (bool), typeof (Layout), new PropertyMetadata(default(bool)));
 
         private static void SetIsFloatingInLayout ( DependencyObject element, bool value )
         {
-            element.SetValue ( KeyIsFloatingInLayoutPropertyKey, value );
+            element.SetValue ( IsFloatingInLayoutPropertyKey, value );
         }
 
         public static bool GetIsFloatingInLayout ( DependencyObject element )
         {
-            return (bool) element.GetValue ( KeyIsFloatingInLayoutPropertyKey.DependencyProperty );
+            return (bool) element.GetValue ( IsFloatingInLayoutPropertyKey.DependencyProperty );
         }
 
         private static readonly DependencyPropertyKey IsTopLeftItemPropertyKey =

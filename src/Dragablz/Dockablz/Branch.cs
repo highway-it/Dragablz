@@ -16,7 +16,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(
-            "Orientation", typeof (Orientation), typeof (Branch), new PropertyMetadata(default(Orientation)));
+            nameof(Orientation), typeof (Orientation), typeof (Branch), new PropertyMetadata(default(Orientation)));
 
         public Orientation Orientation
         {
@@ -25,7 +25,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FirstItemProperty = DependencyProperty.Register(
-            "FirstItem", typeof(object), typeof(Branch), new PropertyMetadata(default(object)));
+            nameof(FirstItem), typeof(object), typeof(Branch), new PropertyMetadata(default(object)));
 
         public object FirstItem
         {
@@ -34,7 +34,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty FirstItemLengthProperty = DependencyProperty.Register(
-            "FirstItemLength", typeof (GridLength), typeof (Branch), new FrameworkPropertyMetadata(new GridLength(0.49999, GridUnitType.Star), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            nameof(FirstItemLength), typeof (GridLength), typeof (Branch), new FrameworkPropertyMetadata(new GridLength(0.49999, GridUnitType.Star), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public GridLength FirstItemLength
         {
@@ -43,7 +43,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty SecondItemProperty = DependencyProperty.Register(
-            "SecondItem", typeof(object), typeof(Branch), new PropertyMetadata(default(object)));
+            nameof(SecondItem), typeof(object), typeof(Branch), new PropertyMetadata(default(object)));
 
         public object SecondItem
         {
@@ -52,7 +52,7 @@ namespace Dragablz.Dockablz
         }
 
         public static readonly DependencyProperty SecondItemLengthProperty = DependencyProperty.Register(
-            "SecondItemLength", typeof(GridLength), typeof(Branch), new FrameworkPropertyMetadata(new GridLength(0.50001, GridUnitType.Star), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            nameof(SecondItemLength), typeof(GridLength), typeof(Branch), new FrameworkPropertyMetadata(new GridLength(0.50001, GridUnitType.Star), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public GridLength SecondItemLength
         {

@@ -4,8 +4,6 @@ namespace Dragablz.Themes
 {
     public static class RippleAssist
     {
-        #region ClipToBound
-
         public static readonly DependencyProperty ClipToBoundsProperty = DependencyProperty.RegisterAttached(
             "ClipToBounds", typeof(bool), typeof(RippleAssist), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
 
@@ -18,10 +16,6 @@ namespace Dragablz.Themes
         {
             return (bool) element.GetValue ( ClipToBoundsProperty );
         }
-
-        #endregion ClipToBound
-
-        #region StayOnCenter
 
         /// <summary>
         /// Set to <c>true</c> to cause the ripple to originate from the centre of the
@@ -51,10 +45,6 @@ namespace Dragablz.Themes
             return (bool) element.GetValue ( IsCenteredProperty );
         }
 
-        #endregion StayOnCenter
-
-        #region RippleSizeMultiplier
-
         public static readonly DependencyProperty RippleSizeMultiplierProperty = DependencyProperty.RegisterAttached(
             "RippleSizeMultiplier", typeof(double), typeof(RippleAssist), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.Inherits));
 
@@ -67,7 +57,5 @@ namespace Dragablz.Themes
         {
             return (double) element.GetValue ( RippleSizeMultiplierProperty );
         }
-
-        #endregion RippleSizeMultiplier
     }
 }
