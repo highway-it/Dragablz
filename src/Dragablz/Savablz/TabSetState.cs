@@ -7,12 +7,12 @@
     public class TabSetState < TTabModel >
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TabSetState"/> class.
+        /// Initializes a new instance of the <see cref="TabSetState" /> class.
         /// </summary>
         public TabSetState ( ) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TabSetState"/> class.
+        /// Initializes a new instance of the <see cref="TabSetState" /> class.
         /// </summary>
         /// <param name="tabItems">The tab items</param>
         /// <param name="selectedTabItemIndex">The index of the tab item that is currently selected in the TabSet</param>

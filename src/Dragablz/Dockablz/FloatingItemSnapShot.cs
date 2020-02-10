@@ -9,24 +9,17 @@ namespace Dragablz.Dockablz
     /// </summary>
     internal class FloatingItemSnapShot
     {
-        private readonly object _content;
-        private readonly Rect _location;
-        private readonly int _zIndex;
-        private readonly WindowState _state;
-
         public FloatingItemSnapShot ( object content, Rect location, int zIndex, WindowState state )
         {
-            if ( content == null ) throw new ArgumentNullException ( "content" );
-
-            _content = content;
-            _location = location;
-            _zIndex = zIndex;
-            _state = state;
+            Content = content ?? throw new ArgumentNullException ( nameof ( content ) );
+            Location = location;
+            ZIndex = zIndex;
+            State = state;
         }
 
         public static FloatingItemSnapShot Take ( DragablzItem dragablzItem )
         {
-            if ( dragablzItem == null ) throw new ArgumentNullException ( "dragablzItem" );
+            if ( dragablzItem == null ) throw new ArgumentNullException ( nameof ( dragablzItem ) );
 
             return new FloatingItemSnapShot (
                 dragablzItem.Content,
@@ -37,7 +30,7 @@ namespace Dragablz.Dockablz
 
         public void Apply ( DragablzItem dragablzItem )
         {
-            if ( dragablzItem == null ) throw new ArgumentNullException ( "dragablzItem" );
+            if ( dragablzItem == null ) throw new ArgumentNullException ( nameof ( dragablzItem ) );
 
             dragablzItem.SetCurrentValue ( DragablzItem.XProperty, Location.Left );
             dragablzItem.SetCurrentValue ( DragablzItem.YProperty, Location.Top );
@@ -47,24 +40,12 @@ namespace Dragablz.Dockablz
             Panel.SetZIndex ( dragablzItem, ZIndex );
         }
 
-        public object Content
-        {
-            get { return _content; }
-        }
+        public object Content { get; }
 
-        public Rect Location
-        {
-            get { return _location; }
-        }
+        public Rect Location { get; }
 
-        public int ZIndex
-        {
-            get { return _zIndex; }
-        }
+        public int ZIndex { get; }
 
-        public WindowState State
-        {
-            get { return _state; }
-        }
+        public WindowState State { get; }
     }
 }

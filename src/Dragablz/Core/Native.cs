@@ -35,15 +35,13 @@ namespace Dragablz.Core
 
         public static POINT GetRawCursorPos ( )
         {
-            POINT lpPoint;
-            GetCursorPos ( out lpPoint );
+            GetCursorPos ( out var lpPoint );
             return lpPoint;
         }
 
         public static Point GetCursorPos ( )
         {
-            POINT lpPoint;
-            GetCursorPos ( out lpPoint );
+            GetCursorPos ( out var lpPoint );
             return lpPoint;
         }
 
@@ -72,14 +70,13 @@ namespace Dragablz.Core
         {
             var windowsByHandle = windows.Select(window =>
             {
-                var hwndSource = PresentationSource.FromVisual(window) as HwndSource;
-                var handle = hwndSource != null ? hwndSource.Handle : IntPtr.Zero;
+                var handle = PresentationSource.FromVisual(window) is HwndSource hwndSource ? hwndSource.Handle : IntPtr.Zero;
                 return new {window, handle};
             }).Where(x => x.handle != IntPtr.Zero)
                 .ToDictionary(x => x.handle, x => x.window);
 
             for ( var hWnd = GetTopWindow ( IntPtr.Zero ); hWnd != IntPtr.Zero; hWnd = GetWindow ( hWnd, GW_HWNDNEXT ) )
-                if ( windowsByHandle.ContainsKey ( ( hWnd ) ) )
+                if ( windowsByHandle.ContainsKey ( hWnd ) )
                     yield return windowsByHandle [ hWnd ];
         }
 

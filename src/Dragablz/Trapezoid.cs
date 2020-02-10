@@ -49,7 +49,6 @@ namespace Dragablz
 
             if ( contentDesiredSize.Width == 0 || double.IsInfinity ( contentDesiredSize.Width )
                 || contentDesiredSize.Height == 0 || double.IsInfinity ( contentDesiredSize.Height ) )
-
                 return contentDesiredSize;
 
             _pathGeometry = CreateGeometry ( contentDesiredSize );
@@ -85,13 +84,13 @@ namespace Dragablz
             //clockwise starting at bottom left
             var bottomLeftSegment = new ArcSegment(new Point(startPoint.X + cheapRadiusSmall, startPoint.Y - cheapRadiusSmall),
                 new Size(cheapRadiusSmall, cheapRadiusSmall), 315, false, SweepDirection.Counterclockwise, true);
-            var triangleX = Math.Tan(radians) * (contentDesiredSize.Height);
+            var triangleX = Math.Tan(radians) * contentDesiredSize.Height;
             var leftSegment = new LineSegment(new Point(bottomLeftSegment.Point.X + triangleX, bottomLeftSegment.Point.Y - contentDesiredSize.Height), true);
             var topLeftSegment = new ArcSegment(new Point(leftSegment.Point.X + cheapRadiusBig, leftSegment.Point.Y - cheapRadiusSmall), new Size(cheapRadiusBig, cheapRadiusBig), 120, false, SweepDirection.Clockwise, true);
             var topSegment = new LineSegment(new Point(contentDesiredSize.Width + cheapRadiusBig + cheapRadiusBig, 0), true);
             var topRightSegment = new ArcSegment(new Point(contentDesiredSize.Width + cheapRadiusBig + cheapRadiusBig + cheapRadiusBig, cheapRadiusSmall), new Size(cheapRadiusBig, cheapRadiusBig), 40, false, SweepDirection.Clockwise, true);
 
-            triangleX = Math.Tan ( radians ) * ( contentDesiredSize.Height );
+            triangleX = Math.Tan ( radians ) *  contentDesiredSize.Height ;
             //triangleX = Math.Tan(radians)*(contentDesiredSize.Height - topRightSegment.Point.Y);
             var rightSegment =
                 new LineSegment(new Point(topRightSegment.Point.X + triangleX,

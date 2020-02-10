@@ -10,12 +10,12 @@ namespace Dragablz.Savablz
     public class LayoutWindowState < TTabModel, TWindowSettings >
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutWindowState"/> class.
+        /// Initializes a new instance of the <see cref="LayoutWindowState" /> class.
         /// </summary>
         public LayoutWindowState ( ) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutWindowState"/> class.
+        /// Initializes a new instance of the <see cref="LayoutWindowState" /> class.
         /// </summary>
         /// <param name="x">The X position of the window</param>
         /// <param name="y">The Y position of the window</param>

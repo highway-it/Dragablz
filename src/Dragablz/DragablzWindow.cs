@@ -14,7 +14,7 @@ using System.Windows.Media;
 namespace Dragablz
 {
     /// <summary>
-    /// It is not necessary to use a <see cref="DragablzWindow"/> to gain tab dragging features.
+    /// It is not necessary to use a <see cref="DragablzWindow" /> to gain tab dragging features.
     /// What this Window does is allow a quick way to remove the Window border, and support transparency whilst
     /// dragging.
     /// </summary>
@@ -39,10 +39,10 @@ namespace Dragablz
         private Point _windowLocationPointWhenResizeBegan;
         private SizeGrip _resizeType;
 
-        private static SizeGrip[] _leftMode = new[] { SizeGrip.TopLeft, SizeGrip.Left, SizeGrip.BottomLeft };
-        private static SizeGrip[] _rightMode = new[] { SizeGrip.TopRight, SizeGrip.Right, SizeGrip.BottomRight };
-        private static SizeGrip[] _topMode = new[] { SizeGrip.TopLeft, SizeGrip.Top, SizeGrip.TopRight };
-        private static SizeGrip[] _bottomMode = new[] { SizeGrip.BottomLeft, SizeGrip.Bottom, SizeGrip.BottomRight };
+        private static readonly SizeGrip[] _leftMode = new[] { SizeGrip.TopLeft, SizeGrip.Left, SizeGrip.BottomLeft };
+        private static readonly SizeGrip[] _rightMode = new[] { SizeGrip.TopRight, SizeGrip.Right, SizeGrip.BottomRight };
+        private static readonly SizeGrip[] _topMode = new[] { SizeGrip.TopLeft, SizeGrip.Top, SizeGrip.TopRight };
+        private static readonly SizeGrip[] _bottomMode = new[] { SizeGrip.BottomLeft, SizeGrip.Bottom, SizeGrip.BottomRight };
 
         private static double _xScale = 1;
         private static double _yScale = 1;
@@ -84,14 +84,13 @@ namespace Dragablz
 
         private void ItemDragStarted ( object sender, DragablzDragStartedEventArgs e )
         {
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
-            if ( sourceOfDragItemsControl == null ) return;
+            if ( ! ( ItemsControl.ItemsControlFromItemContainer ( e.DragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) ) return;
 
             var sourceTab = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
             if ( sourceTab == null ) return;
 
             if ( sourceOfDragItemsControl.Items.Count != 1
-                || ( sourceTab.InterTabController != null && ! sourceTab.InterTabController.MoveWindowWithSolitaryTabs )
+                ||  sourceTab.InterTabController?.MoveWindowWithSolitaryTabs == false
                 || Layout.IsContainedWithinBranch ( sourceOfDragItemsControl ) )
                 return;
 
@@ -117,7 +116,7 @@ namespace Dragablz
                       windowRestoreThumb.MouseDoubleClick -= WindowRestoreThumbOnMouseDoubleClick;
                   }
 
-                  if ( windowResizeThumb == null ) return;
+                  if ( ! ( GetTemplateChild ( WindowResizeThumbPartName ) is Thumb windowResizeThumb ) ) return;
 
                   windowResizeThumb.MouseMove -= WindowResizeThumbOnMouseMove;
                   windowResizeThumb.DragStarted -= WindowResizeThumbOnDragStarted;
@@ -148,8 +147,7 @@ namespace Dragablz
 
         protected override void OnRenderSizeChanged ( SizeChangedInfo sizeInfo )
         {
-            var resizeThumb = GetTemplateChild(WindowResizeThumbPartName) as Thumb;
-            if ( resizeThumb != null )
+            if ( GetTemplateChild ( WindowResizeThumbPartName ) is Thumb resizeThumb )
             {
                 var outerRectangleGeometry = new RectangleGeometry(new Rect(sizeInfo.NewSize));
                 var innerRectangleGeometry =
@@ -166,7 +164,7 @@ namespace Dragablz
             get
             {
                 var value = typeof (Window).GetProperty("CriticalHandle", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(this, new object[0]);
+                    .GetValue(this, Array.Empty<object> ( ));
                 return (IntPtr) value;
             }
         }
@@ -254,7 +252,7 @@ namespace Dragablz
                 return;
             }
 
-            Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+            var m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
             _xScale = m.M11;
             _yScale = m.M22;
             _dpiInitialized = true;
@@ -280,64 +278,41 @@ namespace Dragablz
             {
                 if ( mousePositionInThumb.Y <= ResizeMargin )
                     return SizeGrip.TopLeft;
-                if ( mousePositionInThumb.Y >= thumbSize.Height - ResizeMargin )
-                    return SizeGrip.BottomLeft;
-                return SizeGrip.Left;
+                return mousePositionInThumb.Y >= thumbSize.Height - ResizeMargin ? SizeGrip.BottomLeft : SizeGrip.Left;
             }
 
             if ( mousePositionInThumb.X >= thumbSize.Width - ResizeMargin )
             {
                 if ( mousePositionInThumb.Y <= ResizeMargin )
                     return SizeGrip.TopRight;
-                if ( mousePositionInThumb.Y >= thumbSize.Height - ResizeMargin )
-                    return SizeGrip.BottomRight;
-                return SizeGrip.Right;
+                return mousePositionInThumb.Y >= thumbSize.Height - ResizeMargin ? SizeGrip.BottomRight : SizeGrip.Right;
             }
 
-            if ( mousePositionInThumb.Y <= ResizeMargin )
-                return SizeGrip.Top;
-
-            return SizeGrip.Bottom;
+            return mousePositionInThumb.Y <= ResizeMargin ? SizeGrip.Top : SizeGrip.Bottom;
         }
 
         private static Cursor SelectCursor ( SizeGrip sizeGrip )
         {
-            switch ( sizeGrip )
+            return sizeGrip switch
             {
-                case SizeGrip.Left:
-                    return Cursors.SizeWE;
-
-                case SizeGrip.TopLeft:
-                    return Cursors.SizeNWSE;
-
-                case SizeGrip.Top:
-                    return Cursors.SizeNS;
-
-                case SizeGrip.TopRight:
-                    return Cursors.SizeNESW;
-
-                case SizeGrip.Right:
-                    return Cursors.SizeWE;
-
-                case SizeGrip.BottomRight:
-                    return Cursors.SizeNWSE;
-
-                case SizeGrip.Bottom:
-                    return Cursors.SizeNS;
-
-                case SizeGrip.BottomLeft:
-                    return Cursors.SizeNESW;
-
-                default:
-                    return Cursors.Arrow;
-            }
+                SizeGrip.Left => Cursors.SizeWE,
+                SizeGrip.TopLeft => Cursors.SizeNWSE,
+                SizeGrip.Top => Cursors.SizeNS,
+                SizeGrip.TopRight => Cursors.SizeNESW,
+                SizeGrip.Right => Cursors.SizeWE,
+                SizeGrip.BottomRight => Cursors.SizeNWSE,
+                SizeGrip.Bottom => Cursors.SizeNS,
+                SizeGrip.BottomLeft => Cursors.SizeNESW,
+                _ => Cursors.Arrow,
+            };
         }
 
         private void WindowMoveThumbOnDragDelta ( object sender, DragDeltaEventArgs dragDeltaEventArgs )
         {
             if ( WindowState != WindowState.Maximized ||
-                ( ! ( Math.Abs ( dragDeltaEventArgs.HorizontalChange ) > 2 ) &&
-                 ! ( Math.Abs ( dragDeltaEventArgs.VerticalChange ) > 2 ) ) ) return;
+                 Math.Abs ( dragDeltaEventArgs.HorizontalChange ) <= 2 &&
+                 Math.Abs ( dragDeltaEventArgs.VerticalChange   ) <= 2 )
+                return;
 
             var cursorPos = Native.GetRawCursorPos ( );
             WindowState = WindowState.Normal;

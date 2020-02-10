@@ -15,7 +15,7 @@ namespace Dragablz
 
         public object HeaderContent
         {
-            get { return (object) GetValue ( HeaderContentProperty ); }
+            get { return GetValue ( HeaderContentProperty ); }
             set { SetValue ( HeaderContentProperty, value ); }
         }
 

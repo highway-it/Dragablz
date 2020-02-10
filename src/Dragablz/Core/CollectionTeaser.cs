@@ -20,15 +20,14 @@ namespace Dragablz.Core
         {
             collectionTeaser = null;
 
-            var list = items as IList;
-            if ( list != null )
+            if ( items is IList list )
             {
                 collectionTeaser = new CollectionTeaser ( i => list.Add ( i ), list.Remove );
             }
             else if ( items != null )
             {
                 var itemsType = items.GetType ( );
-                var genericCollectionType = typeof (ICollection<>);
+                var genericCollectionType = typeof ( ICollection < > );
 
                 //TODO, *IF* we really wanted to we could get the consumer to inform us of the correct type
                 //if there are multiple impls.  havent got time for this edge case right now though

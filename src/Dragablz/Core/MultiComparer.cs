@@ -6,11 +6,11 @@ namespace Dragablz.Core
 {
     internal class MultiComparer < TObject > : IComparer < TObject >
     {
-        private readonly IList<FuncComparer < TObject >> _attributeComparers;
+        private readonly IList < FuncComparer < TObject > > _attributeComparers;
 
         private MultiComparer ( FuncComparer < TObject > firstComparer )
         {
-            _attributeComparers = new List<FuncComparer < TObject >>
+            _attributeComparers = new List < FuncComparer < TObject > >
             {
                 firstComparer
             };
@@ -19,7 +19,7 @@ namespace Dragablz.Core
         public static MultiComparer < TObject > Ascending < TAttribute > ( Func < TObject, TAttribute > accessor )
             where TAttribute : IComparable
         {
-            if ( accessor == null ) throw new ArgumentNullException ( "accessor" );
+            if ( accessor == null ) throw new ArgumentNullException ( nameof ( accessor ) );
 
             return new MultiComparer < TObject > ( BuildAscendingComparer ( accessor ) );
         }
@@ -27,7 +27,7 @@ namespace Dragablz.Core
         public static MultiComparer < TObject > Descending < TAttribute > ( Func < TObject, TAttribute > accessor )
             where TAttribute : IComparable
         {
-            if ( accessor == null ) throw new ArgumentNullException ( "accessor" );
+            if ( accessor == null ) throw new ArgumentNullException ( nameof ( accessor ) );
 
             return new MultiComparer < TObject > ( BuildDescendingComparer ( accessor ) );
         }
@@ -35,7 +35,7 @@ namespace Dragablz.Core
         public MultiComparer < TObject > ThenAscending < TAttribute > ( Func < TObject, TAttribute > accessor )
             where TAttribute : IComparable
         {
-            if ( accessor == null ) throw new ArgumentNullException ( "accessor" );
+            if ( accessor == null ) throw new ArgumentNullException ( nameof ( accessor ) );
 
             _attributeComparers.Add ( BuildAscendingComparer ( accessor ) );
 
@@ -45,7 +45,7 @@ namespace Dragablz.Core
         public MultiComparer < TObject > ThenDescending < TAttribute > ( Func < TObject, TAttribute > accessor )
             where TAttribute : IComparable
         {
-            if ( accessor == null ) throw new ArgumentNullException ( "accessor" );
+            if ( accessor == null ) throw new ArgumentNullException ( nameof ( accessor ) );
 
             _attributeComparers.Add ( BuildDescendingComparer ( accessor ) );
 
@@ -56,7 +56,7 @@ namespace Dragablz.Core
         {
             var nonEqual = _attributeComparers.Select(c => new {result = c.Compare(x, y)}).FirstOrDefault(a => a.result != 0);
 
-            return nonEqual == null ? 0 : nonEqual.result;
+            return nonEqual?.result ?? 0;
         }
 
         private static FuncComparer < TObject > BuildAscendingComparer < TAttribute > ( Func < TObject, TAttribute > accessor )

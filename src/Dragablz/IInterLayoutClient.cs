@@ -3,7 +3,7 @@ using System.Windows;
 namespace Dragablz
 {
     /// <summary>
-    /// Implementors should provide a mechanism to provide a new host control which contains a new <see cref="TabablzControl"/>.
+    /// Implementors should provide a mechanism to provide a new host control which contains a new <see cref="TabablzControl" />.
     /// </summary>
     public interface IInterLayoutClient
     {

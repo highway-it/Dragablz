@@ -7,7 +7,7 @@ namespace Dragablz
 {
     /// <summary>
     /// A linear position monitor simplifies the montoring of the order of items, where they are laid out
-    /// horizontally or vertically (typically via a <see cref="StackOrganiser"/>.
+    /// horizontally or vertically (typically via a <see cref="StackOrganiser" />.
     /// </summary>
     public abstract class StackPositionMonitor : PositionMonitor
     {
@@ -15,32 +15,24 @@ namespace Dragablz
 
         protected StackPositionMonitor ( Orientation orientation )
         {
-            switch ( orientation )
+            _getLocation = orientation switch
             {
-                case Orientation.Horizontal:
-                    _getLocation = item => item.X;
-                    break;
-
-                case Orientation.Vertical:
-                    _getLocation = item => item.Y;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException ( "orientation" );
-            }
+                Orientation.Horizontal => item => item.X,
+                Orientation.Vertical => item => item.Y,
+                _ => throw new ArgumentOutOfRangeException ( nameof ( orientation ) ),
+            };
         }
 
         public event EventHandler < OrderChangedEventArgs > OrderChanged;
 
         internal virtual void OnOrderChanged ( OrderChangedEventArgs e )
         {
-            var handler = OrderChanged;
-            if ( handler != null ) handler ( this, e );
+            OrderChanged?.Invoke ( this, e );
         }
 
         internal IEnumerable < DragablzItem > Sort ( IEnumerable < DragablzItem > items )
         {
-            if ( items == null ) throw new ArgumentNullException ( "items" );
+            if ( items == null ) throw new ArgumentNullException ( nameof ( items ) );
 
             return items.OrderBy ( i => _getLocation ( i ) );
         }

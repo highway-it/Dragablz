@@ -20,7 +20,7 @@ namespace Dragablz.Dockablz
             var result = Enumerable.Repeat(minimumCellsPerColumns, columns).ToArray ( );
 
             for ( var i = columns - 1; result.Aggregate ( ( current, next ) => current + next ) < totalCells; i-- )
-                result [ i ] += 1;
+                result [ i ]++;
 
             return result;
         }

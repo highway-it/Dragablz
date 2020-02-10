@@ -49,7 +49,7 @@ namespace Dragablz
 
         protected override void ClearContainerForItemOverride ( DependencyObject element, object item )
         {
-            if ( ContainerCustomisations != null && ContainerCustomisations.ClearingContainerForItemOverride != null )
+            if ( ContainerCustomisations?.ClearingContainerForItemOverride != null )
                 ContainerCustomisations.ClearingContainerForItemOverride ( element, item );
 
             base.ClearContainerForItemOverride ( element, item );
@@ -131,8 +131,7 @@ namespace Dragablz
         /// <param name="addLocationHint"></param>
         public void AddToSource ( object item, object nearItem, AddLocationHint addLocationHint )
         {
-            CollectionTeaser collectionTeaser;
-            if ( CollectionTeaser.TryCreate ( ItemsSource, out collectionTeaser ) )
+            if ( CollectionTeaser.TryCreate ( ItemsSource, out var collectionTeaser ) )
                 collectionTeaser.Add ( item );
             else
                 Items.Add ( item );
@@ -152,15 +151,12 @@ namespace Dragablz
 
         protected override bool IsItemItsOwnContainerOverride ( object item )
         {
-            var dragablzItem = item as DragablzItem;
-            if ( dragablzItem == null ) return false;
-
-            return true;
+            return item is DragablzItem;
         }
 
         protected override DependencyObject GetContainerForItemOverride ( )
         {
-            var result = ContainerCustomisations != null && ContainerCustomisations.GetContainerForItemOverride != null
+            var result = ContainerCustomisations?.GetContainerForItemOverride != null
                 ? ContainerCustomisations.GetContainerForItemOverride ( )
                 : new DragablzItem ( );
 
@@ -171,7 +167,7 @@ namespace Dragablz
 
         protected override void PrepareContainerForItemOverride ( DependencyObject element, object item )
         {
-            if ( ContainerCustomisations != null && ContainerCustomisations.PrepareContainerForItemOverride != null )
+            if ( ContainerCustomisations?.PrepareContainerForItemOverride != null )
                 ContainerCustomisations.PrepareContainerForItemOverride ( element, item );
 
             base.PrepareContainerForItemOverride ( element, item );
@@ -215,7 +211,7 @@ namespace Dragablz
         /// <param name="moveItemRequest"></param>
         public void MoveItem ( MoveItemRequest moveItemRequest )
         {
-            if ( moveItemRequest == null ) throw new ArgumentNullException ( "moveItemRequest" );
+            if ( moveItemRequest == null ) throw new ArgumentNullException ( nameof ( moveItemRequest ) );
 
             if ( ItemsOrganiser == null ) return;
 
@@ -341,8 +337,7 @@ namespace Dragablz
             eventArgs.DragablzItem.X = desiredLocation.X;
             eventArgs.DragablzItem.Y = desiredLocation.Y;
 
-            if ( ItemsOrganiser != null )
-                ItemsOrganiser.OrganiseOnDrag (
+            ItemsOrganiser?.OrganiseOnDrag (
                     this,
                     bounds,
                     DragablzItems ( ).Except ( new [ ] { eventArgs.DragablzItem } ), eventArgs.DragablzItem );
@@ -372,11 +367,10 @@ namespace Dragablz
 
             PositionMonitor.OnLocationChanged ( new LocationChangedEventArgs ( dragablzItem.Content, new Point ( dragablzItem.X, dragablzItem.Y ) ) );
 
-            var linearPositionMonitor = PositionMonitor as StackPositionMonitor;
-            if ( linearPositionMonitor == null ) return;
+            if ( ! ( PositionMonitor is StackPositionMonitor linearPositionMonitor ) ) return;
 
             var sortedItems = linearPositionMonitor.Sort(this.Containers < DragablzItem > ( )).Select(di => di.Content).ToArray ( );
-            if ( _previousSortQueryResult == null || ! _previousSortQueryResult.SequenceEqual ( sortedItems ) )
+            if ( _previousSortQueryResult?.SequenceEqual ( sortedItems ) != true )
                 linearPositionMonitor.OnOrderChanged ( new OrderChangedEventArgs ( _previousSortQueryResult, sortedItems ) );
 
             _previousSortQueryResult = sortedItems;

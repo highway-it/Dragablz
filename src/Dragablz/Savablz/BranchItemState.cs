@@ -7,12 +7,12 @@
     public class BranchItemState < TTabItem >
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BranchItemState"/> class.
+        /// Initializes a new instance of the <see cref="BranchItemState" /> class.
         /// </summary>
         public BranchItemState ( ) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BranchItemState"/> class.
+        /// Initializes a new instance of the <see cref="BranchItemState" /> class.
         /// </summary>
         /// <param name="branch">If this item is a branch, this parameter must contain the branch state (<c>null</c> otherwise)</param>
         /// <param name="tabSet">If this item is a tab set, this parameter must contain the tab set state (<c>null</c> otherwise)</param>

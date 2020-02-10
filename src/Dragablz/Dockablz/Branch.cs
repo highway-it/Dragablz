@@ -66,7 +66,7 @@ namespace Dragablz.Dockablz
         /// <returns></returns>
         public double GetFirstProportion ( )
         {
-            return ( 1 / ( FirstItemLength.Value + SecondItemLength.Value ) ) * FirstItemLength.Value;
+            return  1 / ( FirstItemLength.Value + SecondItemLength.Value )  * FirstItemLength.Value;
         }
 
         public override void OnApplyTemplate ( )

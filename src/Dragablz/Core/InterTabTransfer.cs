@@ -14,99 +14,50 @@ namespace Dragablz.Core
 
     internal class InterTabTransfer
     {
-        private readonly object _item;
-        private readonly DragablzItem _originatorContainer;
-        private readonly Orientation _breachOrientation;
-        private readonly Point _dragStartWindowOffset;
-        private readonly Point _dragStartItemOffset;
-        private readonly Point _itemPositionWithinHeader;
-        private readonly Size _itemSize;
-        private readonly IList < FloatingItemSnapShot > _floatingItemSnapShots;
-        private readonly bool _isTransposing;
-        private readonly InterTabTransferReason _transferReason;
-
         public InterTabTransfer ( object item, DragablzItem originatorContainer, Orientation breachOrientation, Point dragStartWindowOffset, Point dragStartItemOffset, Point itemPositionWithinHeader, Size itemSize, IList < FloatingItemSnapShot > floatingItemSnapShots, bool isTransposing )
         {
-            if ( item == null ) throw new ArgumentNullException ( "item" );
-            if ( originatorContainer == null ) throw new ArgumentNullException ( "originatorContainer" );
-            if ( floatingItemSnapShots == null ) throw new ArgumentNullException ( "floatingItemSnapShots" );
+            TransferReason = InterTabTransferReason.Breach;
 
-            _transferReason = InterTabTransferReason.Breach;
-
-            _item = item;
-            _originatorContainer = originatorContainer;
-            _breachOrientation = breachOrientation;
-            _dragStartWindowOffset = dragStartWindowOffset;
-            _dragStartItemOffset = dragStartItemOffset;
-            _itemPositionWithinHeader = itemPositionWithinHeader;
-            _itemSize = itemSize;
-            _floatingItemSnapShots = floatingItemSnapShots;
-            _isTransposing = isTransposing;
+            Item = item ?? throw new ArgumentNullException ( nameof ( item ) );
+            OriginatorContainer = originatorContainer ?? throw new ArgumentNullException ( nameof ( originatorContainer ) );
+            BreachOrientation = breachOrientation;
+            DragStartWindowOffset = dragStartWindowOffset;
+            DragStartItemOffset = dragStartItemOffset;
+            ItemPositionWithinHeader = itemPositionWithinHeader;
+            ItemSize = itemSize;
+            FloatingItemSnapShots = floatingItemSnapShots ?? throw new ArgumentNullException ( nameof ( floatingItemSnapShots ) );
+            IsTransposing = isTransposing;
         }
 
         public InterTabTransfer ( object item, DragablzItem originatorContainer, Point dragStartItemOffset,
             IList < FloatingItemSnapShot > floatingItemSnapShots )
         {
-            if ( item == null ) throw new ArgumentNullException ( "item" );
-            if ( originatorContainer == null ) throw new ArgumentNullException ( "originatorContainer" );
-            if ( floatingItemSnapShots == null ) throw new ArgumentNullException ( "floatingItemSnapShots" );
+            TransferReason = InterTabTransferReason.Reentry;
 
-            _transferReason = InterTabTransferReason.Reentry;
-
-            _item = item;
-            _originatorContainer = originatorContainer;
-            _dragStartItemOffset = dragStartItemOffset;
-            _floatingItemSnapShots = floatingItemSnapShots;
+            Item = item ?? throw new ArgumentNullException ( nameof ( item ) );
+            OriginatorContainer = originatorContainer ?? throw new ArgumentNullException ( nameof ( originatorContainer ) );
+            DragStartItemOffset = dragStartItemOffset;
+            FloatingItemSnapShots = floatingItemSnapShots ?? throw new ArgumentNullException ( nameof ( floatingItemSnapShots ) );
         }
 
-        public Orientation BreachOrientation
-        {
-            get { return _breachOrientation; }
-        }
+        public Orientation BreachOrientation { get; }
 
-        public Point DragStartWindowOffset
-        {
-            get { return _dragStartWindowOffset; }
-        }
+        public Point DragStartWindowOffset { get; }
 
-        public object Item
-        {
-            get { return _item; }
-        }
+        public object Item { get; }
 
-        public DragablzItem OriginatorContainer
-        {
-            get { return _originatorContainer; }
-        }
+        public DragablzItem OriginatorContainer { get; }
 
-        public InterTabTransferReason TransferReason
-        {
-            get { return _transferReason; }
-        }
+        public InterTabTransferReason TransferReason { get; }
 
-        public Point DragStartItemOffset
-        {
-            get { return _dragStartItemOffset; }
-        }
+        public Point DragStartItemOffset { get; }
 
-        public Point ItemPositionWithinHeader
-        {
-            get { return _itemPositionWithinHeader; }
-        }
+        public Point ItemPositionWithinHeader { get; }
 
-        public Size ItemSize
-        {
-            get { return _itemSize; }
-        }
+        public Size ItemSize { get; }
 
-        public IList < FloatingItemSnapShot > FloatingItemSnapShots
-        {
-            get { return _floatingItemSnapShots; }
-        }
+        public IList<FloatingItemSnapShot> FloatingItemSnapShots { get; }
 
-        public bool IsTransposing
-        {
-            get { return _isTransposing; }
-        }
+        public bool IsTransposing { get; }
     }
 }

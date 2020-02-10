@@ -6,15 +6,15 @@ using System.Windows.Controls;
 
 namespace Dragablz.Dockablz
 {
-    internal class Tiler
+    internal static class Tiler
     {
         public static void Tile ( IEnumerable < DragablzItem > dragablzItems, Size bounds )
         {
-            if ( dragablzItems == null ) throw new ArgumentNullException ( "dragablzItems" );
+            if ( dragablzItems == null ) throw new ArgumentNullException ( nameof ( dragablzItems ) );
 
             var items = new Queue < DragablzItem >(dragablzItems.OrderBy(Panel.GetZIndex));
 
-            var cellCountPerColumn = TilerCalculator.GetCellCountPerColumn(items.Count ( ));
+            var cellCountPerColumn = TilerCalculator.GetCellCountPerColumn(items.Count);
             var x = 0d;
             var cellWidth = bounds.Width / cellCountPerColumn.Length;
             foreach ( var cellCount in cellCountPerColumn )
@@ -39,7 +39,7 @@ namespace Dragablz.Dockablz
 
         public static void TileHorizontally ( IEnumerable < DragablzItem > dragablzItems, Size bounds )
         {
-            if ( dragablzItems == null ) throw new ArgumentNullException ( "dragablzItems" );
+            if ( dragablzItems == null ) throw new ArgumentNullException ( nameof ( dragablzItems ) );
 
             var items = dragablzItems.ToList ( );
 
@@ -58,7 +58,7 @@ namespace Dragablz.Dockablz
 
         public static void TileVertically ( IEnumerable < DragablzItem > dragablzItems, Size bounds )
         {
-            if ( dragablzItems == null ) throw new ArgumentNullException ( "dragablzItems" );
+            if ( dragablzItems == null ) throw new ArgumentNullException ( nameof ( dragablzItems ) );
 
             var items = dragablzItems.ToList ( );
 

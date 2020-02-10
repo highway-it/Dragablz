@@ -13,8 +13,7 @@ namespace Dragablz.Core
         {
             for ( var i = 0; i < itemsControl.ItemContainerGenerator.Items.Count; i++ )
             {
-                var container = itemsControl.ItemContainerGenerator.ContainerFromIndex(i) as TContainer;
-                if ( container != null )
+                if ( itemsControl.ItemContainerGenerator.ContainerFromIndex ( i ) is TContainer container )
                     yield return container;
             }
         }
@@ -56,7 +55,7 @@ namespace Dragablz.Core
         /// <returns></returns>
         public static IEnumerable < DependencyObject > VisualTreeAncestory ( this DependencyObject dependencyObject )
         {
-            if ( dependencyObject == null ) throw new ArgumentNullException ( "dependencyObject" );
+            if ( dependencyObject == null ) throw new ArgumentNullException ( nameof ( dependencyObject ) );
 
             while ( dependencyObject != null )
             {
@@ -72,7 +71,7 @@ namespace Dragablz.Core
         /// <returns></returns>
         public static IEnumerable < DependencyObject > LogicalTreeAncestory ( this DependencyObject dependencyObject )
         {
-            if ( dependencyObject == null ) throw new ArgumentNullException ( "dependencyObject" );
+            if ( dependencyObject == null ) throw new ArgumentNullException ( nameof ( dependencyObject ) );
 
             while ( dependencyObject != null )
             {

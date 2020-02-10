@@ -151,7 +151,7 @@ namespace Dragablz
                 (int) e.OldValue,
                 (int) e.NewValue)
             {
-                RoutedEvent = DragablzItem.LogicalIndexChangedEvent
+                RoutedEvent = LogicalIndexChangedEvent
             };
             instance.RaiseEvent ( args );
         }
@@ -161,16 +161,18 @@ namespace Dragablz
 
         private static void SizeGripPropertyChangedCallback ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
         {
-            var thumb = (dependencyObject as Thumb);
-            if ( thumb == null ) return;
+            if ( ! ( dependencyObject is Thumb thumb ) )
+                return;
+
             thumb.DragDelta += SizeThumbOnDragDelta;
         }
 
         private static void SizeThumbOnDragDelta ( object sender, DragDeltaEventArgs dragDeltaEventArgs )
         {
-            var thumb = ((Thumb) sender);
+            var thumb = (Thumb) sender;
             var dragablzItem = thumb.VisualTreeAncestory ( ).OfType < DragablzItem > ( ).FirstOrDefault ( );
-            if ( dragablzItem == null ) return;
+            if ( dragablzItem == null )
+                return;
 
             var sizeGrip = (SizeGrip) thumb.GetValue(SizeGripProperty);
             var width = dragablzItem.ActualWidth;
@@ -438,8 +440,7 @@ namespace Dragablz
 
         private static void IsCustomThumbPropertyChangedCallback ( DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs )
         {
-            var thumb = dependencyObject as Thumb;
-            if ( thumb == null ) throw new ApplicationException ( "IsCustomThumb can only be applied to a thumb" );
+            if ( ! ( dependencyObject is Thumb thumb ) ) throw new ApplicationException ( "IsCustomThumb can only be applied to a thumb" );
 
             if ( thumb.IsLoaded )
                 ApplyCustomThumbSetting ( thumb );
@@ -477,8 +478,7 @@ namespace Dragablz
             {
                 _isTemplateThumbWithMouseAfterSeize = true;
                 Mouse.AddLostMouseCaptureHandler ( this, LostMouseAfterSeizeHandler );
-                if ( _dragSeizedContinuation != null )
-                    _dragSeizedContinuation ( this );
+                _dragSeizedContinuation?.Invoke ( this );
                 _dragSeizedContinuation = null;
 
                 Dispatcher.BeginInvoke ( new Action ( ( ) => thumbAndSubscription.Item1.RaiseEvent ( new MouseButtonEventArgs ( InputManager.Current.PrimaryMouseDevice,
@@ -523,8 +523,7 @@ namespace Dragablz
         internal void InstigateDrag ( Action < DragablzItem > continuation )
         {
             _dragSeizedContinuation = continuation;
-            var thumb = GetTemplateChild(ThumbPartName) as Thumb;
-            if ( thumb != null )
+            if ( GetTemplateChild ( ThumbPartName ) is Thumb thumb )
             {
                 thumb.CaptureMouse ( );
             }

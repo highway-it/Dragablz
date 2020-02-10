@@ -43,7 +43,7 @@ namespace Dragablz
         public static RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(TabablzControl));
 
         /// <summary>
-        /// Routed command which can be used to add a new tab.  See <see cref="NewItemFactory"/>.
+        /// Routed command which can be used to add a new tab.  See <see cref="NewItemFactory" />.
         /// </summary>
         public static RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(TabablzControl));
 
@@ -111,7 +111,7 @@ namespace Dragablz
                 GetLoadedInstances ( ).SelectMany ( tc =>
                     tc._dragablzItemsControl.DragablzItems ( ).Where ( di => di.Content.Equals ( tabContentItem ) ).Select ( di => new { tc, di } ) ) )
             {
-                TabablzControl.CloseItem ( tabWithItemContent.di, tabWithItemContent.tc );
+                CloseItem ( tabWithItemContent.di, tabWithItemContent.tc );
             }
         }
 
@@ -121,14 +121,14 @@ namespace Dragablz
         /// <remarks>
         /// Due to the organisable nature of the control, the order of items may not reflect the order in the source collection.  This method
         /// will add items to the source collection, managing their initial appearance on screen at the same time.
-        /// If you are using a <see cref="InterTabController.InterTabClient"/> this will be used to add the item into the source collection.
+        /// If you are using a <see cref="InterTabController.InterTabClient" /> this will be used to add the item into the source collection.
         /// </remarks>
         /// <param name="item">New item to add.</param>
         /// <param name="nearItem">Existing object/tab item content which defines which tab control should be used to add the object.</param>
-        /// <param name="addLocationHint">Location, relative to the <paramref name="nearItem"/> object</param>
+        /// <param name="addLocationHint">Location, relative to the <paramref name="nearItem" /> object</param>
         public static void AddItem ( object item, object nearItem, AddLocationHint addLocationHint )
         {
-            if ( nearItem == null ) throw new ArgumentNullException ( "nearItem" );
+            if ( nearItem == null ) throw new ArgumentNullException ( nameof ( nearItem ) );
 
             var existingLocation = GetLoadedInstances ( ).SelectMany(tabControl =>
                 (tabControl.ItemsSource ?? tabControl.Items).OfType < object > ( )
@@ -136,11 +136,10 @@ namespace Dragablz
                 .SingleOrDefault(a => nearItem.Equals(a.existingObject));
 
             if ( existingLocation == null )
-                throw new ArgumentException ( "Did not find precisely one instance of adjacentTo", "nearItem" );
+                throw new ArgumentException ( "Did not find precisely one instance of adjacentTo", nameof ( nearItem ) );
 
             existingLocation.tabControl.AddToSource ( item );
-            if ( existingLocation.tabControl._dragablzItemsControl != null )
-                existingLocation.tabControl._dragablzItemsControl.MoveItem ( new MoveItemRequest ( item, nearItem, addLocationHint ) );
+            existingLocation.tabControl._dragablzItemsControl?.MoveItem ( new MoveItemRequest ( item, nearItem, addLocationHint ) );
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Style to apply to header items which are not their own item container (<see cref="TabItem"/>).  Typically items bound via the <see cref="ItemsSource"/> will use this style.
+        /// Style to apply to header items which are not their own item container (<see cref="TabItem" />).  Typically items bound via the <see cref="ItemsSource" /> will use this style.
         /// </summary>
         [Obsolete]
         public Style CustomHeaderItemStyle
@@ -235,7 +234,7 @@ namespace Dragablz
 
         public object HeaderPrefixContent
         {
-            get { return (object) GetValue ( HeaderPrefixContentProperty ); }
+            get { return GetValue ( HeaderPrefixContentProperty ); }
             set { SetValue ( HeaderPrefixContentProperty, value ); }
         }
 
@@ -271,7 +270,7 @@ namespace Dragablz
 
         public object HeaderSuffixContent
         {
-            get { return (object) GetValue ( HeaderSuffixContentProperty ); }
+            get { return GetValue ( HeaderSuffixContentProperty ); }
             set { SetValue ( HeaderSuffixContentProperty, value ); }
         }
 
@@ -307,7 +306,7 @@ namespace Dragablz
 
         /// <summary>
         /// Indicates whether a default close button should be displayed.  If manually templating the tab header content the close command
-        /// can be called by executing the <see cref="TabablzControl.CloseItemCommand"/> command (typically via a <see cref="Button"/>).
+        /// can be called by executing the <see cref="CloseItemCommand" /> command (typically via a <see cref="Button" />).
         /// </summary>
         public bool ShowDefaultCloseButton
         {
@@ -320,8 +319,8 @@ namespace Dragablz
 
         /// <summary>
         /// Indicates whether a default add button should be displayed.  Alternately an add button
-        /// could be added in <see cref="HeaderPrefixContent"/> or <see cref="HeaderSuffixContent"/>, utilising
-        /// <see cref="AddItemCommand"/>.
+        /// could be added in <see cref="HeaderPrefixContent" /> or <see cref="HeaderSuffixContent" />, utilising
+        /// <see cref="AddItemCommand" />.
         /// </summary>
         public bool ShowDefaultAddButton
         {
@@ -382,7 +381,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// An <see cref="InterTabController"/> must be provided to enable tab tearing. Behaviour customisations can be applied
+        /// An <see cref="InterTabController" /> must be provided to enable tab tearing. Behaviour customisations can be applied
         /// vie the controller.
         /// </summary>
         public InterTabController InterTabController
@@ -392,13 +391,13 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand"/>.
+        /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand" />.
         /// </summary>
         public static readonly DependencyProperty NewItemFactoryProperty = DependencyProperty.Register(
             "NewItemFactory", typeof (Func < object >), typeof (TabablzControl), new PropertyMetadata(default(Func < object >)));
 
         /// <summary>
-        /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand"/>.
+        /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand" />.
         /// </summary>
         public Func < object > NewItemFactory
         {
@@ -427,7 +426,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Raised when <see cref="IsEmpty"/> changes.
+        /// Raised when <see cref="IsEmpty" /> changes.
         /// </summary>
         public static readonly RoutedEvent IsEmptyChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -437,7 +436,7 @@ namespace Dragablz
                 typeof (TabablzControl));
 
         /// <summary>
-        /// Event handler to list to <see cref="IsEmptyChangedEvent"/>.
+        /// Event handler to list to <see cref="IsEmptyChangedEvent" />.
         /// </summary>
         public event RoutedPropertyChangedEventHandler < bool > IsEmptyChanged
         {
@@ -491,16 +490,16 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Assuming <see cref="ConsolidateOrphanedItems"/> is set to <c>true</c>, consolidation of individual
-        /// tab items can be cancelled by providing this call back and cancelling the <see cref="ItemActionCallbackArgs{TOwner}"/>
+        /// Assuming <see cref="ConsolidateOrphanedItems" /> is set to <c>true</c>, consolidation of individual
+        /// tab items can be cancelled by providing this call back and cancelling the <see cref="ItemActionCallbackArgs{TOwner}" />
         /// instance.
         /// </summary>
         public static readonly DependencyProperty ConsolidatingOrphanedItemCallbackProperty = DependencyProperty.Register(
             "ConsolidatingOrphanedItemCallback", typeof (ItemActionCallback), typeof (TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
 
         /// <summary>
-        /// Assuming <see cref="ConsolidateOrphanedItems"/> is set to <c>true</c>, consolidation of individual
-        /// tab items can be cancelled by providing this call back and cancelling the <see cref="ItemActionCallbackArgs{TOwner}"/>
+        /// Assuming <see cref="ConsolidateOrphanedItems" /> is set to <c>true</c>, consolidation of individual
+        /// tab items can be cancelled by providing this call back and cancelling the <see cref="ItemActionCallbackArgs{TOwner}" />
         /// instance.
         /// </summary>
         public ItemActionCallback ConsolidatingOrphanedItemCallback
@@ -515,14 +514,14 @@ namespace Dragablz
                 new PropertyMetadata(default(bool), OnIsDraggingWindowChanged));
 
         /// <summary>
-        /// Readonly dependency property which indicates whether the owning <see cref="Window"/>
+        /// Readonly dependency property which indicates whether the owning <see cref="Window" />
         /// is currently dragged
         /// </summary>
         public static readonly DependencyProperty IsDraggingWindowProperty =
             IsDraggingWindowPropertyKey.DependencyProperty;
 
         /// <summary>
-        /// Readonly dependency property which indicates whether the owning <see cref="Window"/>
+        /// Readonly dependency property which indicates whether the owning <see cref="Window" />
         /// is currently dragged
         /// </summary>
         public bool IsDraggingWindow
@@ -532,7 +531,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Event indicating <see cref="IsDraggingWindow"/> has changed.
+        /// Event indicating <see cref="IsDraggingWindow" /> has changed.
         /// </summary>
         public static readonly RoutedEvent IsDraggingWindowChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -542,7 +541,7 @@ namespace Dragablz
                 typeof (TabablzControl));
 
         /// <summary>
-        /// Event indicating <see cref="IsDraggingWindow"/> has changed.
+        /// Event indicating <see cref="IsDraggingWindow" /> has changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler < bool > IsDraggingWindowChanged
         {
@@ -575,7 +574,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Helper method which can tell you if a <see cref="Window"/> is being automatically closed due
+        /// Helper method which can tell you if a <see cref="Window" /> is being automatically closed due
         /// to a user instigated drag operation (typically when a single tab is dropped into another window.
         /// </summary>
         /// <param name="element"></param>
@@ -615,12 +614,12 @@ namespace Dragablz
 
         /// <summary>
         /// Adds an item to the source collection.  If the InterTabController.InterTabClient is set that instance will be deferred to.
-        /// Otherwise an attempt will be made to add to the <see cref="ItemsSource" /> property, and lastly <see cref="Items"/>.
+        /// Otherwise an attempt will be made to add to the <see cref="ItemsSource" /> property, and lastly <see cref="Items" />.
         /// </summary>
         /// <param name="item"></param>
         public void AddToSource ( object item )
         {
-            if ( item == null ) throw new ArgumentNullException ( "item" );
+            if ( item == null ) throw new ArgumentNullException ( nameof ( item ) );
 
             var manualInterTabClient = InterTabController == null ? null : InterTabController.InterTabClient as IManualInterTabClient;
             if ( manualInterTabClient != null )
@@ -629,8 +628,7 @@ namespace Dragablz
             }
             else
             {
-                CollectionTeaser collectionTeaser;
-                if ( CollectionTeaser.TryCreate ( ItemsSource, out collectionTeaser ) )
+                if ( CollectionTeaser.TryCreate ( ItemsSource, out var collectionTeaser ) )
                     collectionTeaser.Add ( item );
                 else
                     Items.Add ( item );
@@ -639,12 +637,12 @@ namespace Dragablz
 
         /// <summary>
         /// Removes an item from the source collection.  If the InterTabController.InterTabClient is set that instance will be deferred to.
-        /// Otherwise an attempt will be made to remove from the <see cref="ItemsSource" /> property, and lastly <see cref="Items"/>.
+        /// Otherwise an attempt will be made to remove from the <see cref="ItemsSource" /> property, and lastly <see cref="Items" />.
         /// </summary>
         /// <param name="item"></param>
         public void RemoveFromSource ( object item )
         {
-            if ( item == null ) throw new ArgumentNullException ( "item" );
+            if ( item == null ) throw new ArgumentNullException ( nameof ( item ) );
 
             var manualInterTabClient = InterTabController == null ? null : InterTabController.InterTabClient as IManualInterTabClient;
             if ( manualInterTabClient != null )
@@ -653,8 +651,7 @@ namespace Dragablz
             }
             else
             {
-                CollectionTeaser collectionTeaser;
-                if ( CollectionTeaser.TryCreate ( ItemsSource, out collectionTeaser ) )
+                if ( CollectionTeaser.TryCreate ( ItemsSource, out var collectionTeaser ) )
                     collectionTeaser.Remove ( item );
                 else
                     Items.Remove ( item );
@@ -671,7 +668,7 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
+        /// Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate" /> is called.
         /// </summary>
         public override void OnApplyTemplate ( )
         {
@@ -716,12 +713,12 @@ namespace Dragablz
 
             if ( _dragablzItemsControl == null ) return;
 
-            Func<IList, IEnumerable < DragablzItem >> notTabItems =
-                l =>
-                    l.Cast < object > ( )
-                        .Where(o => ! (o is TabItem))
-                        .Select(o => _dragablzItemsControl.ItemContainerGenerator.ContainerFromItem(o))
+            IEnumerable < DragablzItem > notTabItems ( IList l ) =>
+                    l.Cast<object> ( )
+                        .Where ( o => ! ( o is TabItem ) )
+                        .Select ( o => _dragablzItemsControl.ItemContainerGenerator.ContainerFromItem ( o ) )
                         .OfType < DragablzItem > ( );
+
             foreach ( var addedItem in notTabItems ( e.AddedItems ) )
             {
                 addedItem.IsSelected = true;
@@ -763,7 +760,7 @@ namespace Dragablz
 
                     if ( Items.Count > 0 )
                     {
-                        SelectedItem = base.Items [ 0 ];
+                        SelectedItem = Items [ 0 ];
                         UpdateSelectedItem ( );
                     }
 
@@ -797,9 +794,9 @@ namespace Dragablz
         }
 
         /// <summary>
-        /// Provides class handling for the <see cref="E:System.Windows.ContentElement.KeyDown"/> routed event that occurs when the user presses a key.
+        /// Provides class handling for the <see cref="E:System.Windows.ContentElement.KeyDown" /> routed event that occurs when the user presses a key.
         /// </summary>
-        /// <param name="e">Provides data for <see cref="T:System.Windows.Input.KeyEventArgs"/>.</param>
+        /// <param name="e">Provides data for <see cref="T:System.Windows.Input.KeyEventArgs" />.</param>
         protected override void OnKeyDown ( KeyEventArgs e )
         {
             var sortedDragablzItems = _dragablzItemsControl.ItemsOrganiser.Sort(_dragablzItemsControl.DragablzItems ( )).ToList ( );
@@ -963,8 +960,7 @@ namespace Dragablz
 
             e.DragablzItem.IsDropTargetFound = false;
 
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
-            if ( sourceOfDragItemsControl == null || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) ) return;
+            if ( ! ( ItemsControlFromItemContainer ( e.DragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) ) return;
 
             var itemsControlOffset = Mouse.GetPosition(_dragablzItemsControl);
             _tabHeaderDragStartInformation = new TabHeaderDragStartInformation ( e.DragablzItem, itemsControlOffset.X,
@@ -975,8 +971,7 @@ namespace Dragablz
             e.DragablzItem.IsSelected = true;
             e.DragablzItem.PartitionAtDragStart = InterTabController?.Partition;
             var item = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(e.DragablzItem);
-            var tabItem = item as TabItem;
-            if ( tabItem != null )
+            if ( item is TabItem tabItem )
                 tabItem.IsSelected = true;
             SelectedItem = item;
 
@@ -986,17 +981,16 @@ namespace Dragablz
 
         private bool ShouldDragWindow ( DragablzItemsControl sourceOfDragItemsControl )
         {
-            return ( Items.Count == 1
-                    && ( InterTabController == null || InterTabController.MoveWindowWithSolitaryTabs )
-                    && ! Layout.IsContainedWithinBranch ( sourceOfDragItemsControl ) );
+            return Items.Count == 1
+                    &&  InterTabController?.MoveWindowWithSolitaryTabs != false
+                    && ! Layout.IsContainedWithinBranch ( sourceOfDragItemsControl );
         }
 
         private void PreviewItemDragDelta ( object sender, DragablzDragDeltaEventArgs e )
         {
             if ( _dragablzItemsControl == null ) return;
 
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
-            if ( sourceOfDragItemsControl == null || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) ) return;
+            if ( ! ( ItemsControlFromItemContainer ( e.DragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) ) return;
 
             if ( ! ShouldDragWindow ( sourceOfDragItemsControl ) ) return;
 
@@ -1110,8 +1104,7 @@ namespace Dragablz
 
             var window = Window.GetWindow(this);
             if ( window != null
-                && InterTabController != null
-                && InterTabController.InterTabClient.TabEmptiedHandler ( this, window ) == TabEmptiedResponse.CloseWindowOrLayoutBranch )
+                && InterTabController?.InterTabClient.TabEmptiedHandler ( this, window ) == TabEmptiedResponse.CloseWindowOrLayoutBranch )
             {
                 if ( Layout.ConsolidateBranch ( this ) ) return item;
 
@@ -1162,7 +1155,7 @@ namespace Dragablz
 
         private bool IsMyItem ( DragablzItem item )
         {
-            return _dragablzItemsControl != null && _dragablzItemsControl.DragablzItems ( ).Contains ( item );
+            return _dragablzItemsControl?.DragablzItems ( ).Contains ( item ) == true;
         }
 
         private void MonitorBreach ( DragablzDragDeltaEventArgs e )
@@ -1171,10 +1164,10 @@ namespace Dragablz
 
             Orientation? breachOrientation = null;
             if ( mousePositionOnHeaderItemsControl.X < -InterTabController.HorizontalPopoutGrace
-                || ( mousePositionOnHeaderItemsControl.X - _dragablzItemsControl.ActualWidth ) > InterTabController.HorizontalPopoutGrace )
+                ||  mousePositionOnHeaderItemsControl.X - _dragablzItemsControl.ActualWidth  > InterTabController.HorizontalPopoutGrace )
                 breachOrientation = Orientation.Horizontal;
             else if ( mousePositionOnHeaderItemsControl.Y < -InterTabController.VerticalPopoutGrace
-                     || ( mousePositionOnHeaderItemsControl.Y - _dragablzItemsControl.ActualHeight ) > InterTabController.VerticalPopoutGrace )
+                     ||  mousePositionOnHeaderItemsControl.Y - _dragablzItemsControl.ActualHeight  > InterTabController.VerticalPopoutGrace )
                 breachOrientation = Orientation.Vertical;
 
             if ( ! breachOrientation.HasValue ) return;
@@ -1391,7 +1384,7 @@ namespace Dragablz
             var selectedContent = GetContent(SelectedItem);
             foreach ( ContentPresenter child in _itemsHolder.Children )
             {
-                var isSelected = (child.Content == selectedContent);
+                var isSelected = child.Content == selectedContent;
                 child.Visibility = isSelected ? Visibility.Visible : Visibility.Collapsed;
                 child.IsEnabled = isSelected;
             }
@@ -1486,17 +1479,16 @@ namespace Dragablz
 
         private static Tuple < DragablzItem, TabablzControl > FindOwner ( object eventParameter, object eventOriginalSource )
         {
-            var dragablzItem = eventParameter as DragablzItem;
-            if ( dragablzItem == null )
+            if ( ! ( eventParameter is DragablzItem dragablzItem ) )
             {
                 var dependencyObject = eventOriginalSource as DependencyObject;
-                dragablzItem = dependencyObject.VisualTreeAncestory ( ).OfType < DragablzItem > ( ).FirstOrDefault ( );
+                dragablzItem = dependencyObject.VisualTreeAncestory ( ).OfType<DragablzItem> ( ).FirstOrDefault ( );
                 if ( dragablzItem == null )
                 {
                     var popup = dependencyObject.LogicalTreeAncestory ( ).OfType < Popup > ( ).LastOrDefault ( );
                     if ( popup?.PlacementTarget != null )
                     {
-                        dragablzItem = popup.PlacementTarget.VisualTreeAncestory ( ).OfType < DragablzItem > ( ).FirstOrDefault ( );
+                        dragablzItem = popup.PlacementTarget.VisualTreeAncestory ( ).OfType<DragablzItem> ( ).FirstOrDefault ( );
                     }
                 }
             }
@@ -1524,8 +1516,7 @@ namespace Dragablz
 
         private void PrepareChildContainerForItemOverride ( DependencyObject dependencyObject, object o )
         {
-            var dragablzItem = dependencyObject as DragablzItem;
-            if ( dragablzItem != null && HeaderMemberPath != null )
+            if ( dependencyObject is DragablzItem dragablzItem && HeaderMemberPath != null )
             {
                 var contentBinding = new Binding(HeaderMemberPath) { Source = o };
                 dragablzItem.SetBinding ( ContentControl.ContentProperty, contentBinding );

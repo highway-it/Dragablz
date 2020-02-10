@@ -9,12 +9,12 @@ namespace Dragablz.Savablz
     public class BranchState < TTabModel >
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BranchState"/> class.
+        /// Initializes a new instance of the <see cref="BranchState" /> class.
         /// </summary>
         public BranchState ( ) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BranchState"/> class.
+        /// Initializes a new instance of the <see cref="BranchState" /> class.
         /// </summary>
         /// <param name="firstChild">The first child</param>
         /// <param name="secondChild">The second child</param>

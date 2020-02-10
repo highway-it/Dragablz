@@ -10,12 +10,11 @@ namespace Dragablz.Converters
     {
         public object Convert ( object [ ] values, Type targetType, object parameter, CultureInfo culture )
         {
-            if ( values == null )
-                return Visibility.Collapsed;
-
-            return values.Select ( GetBool ).All ( b => b )
+            return values == null
+                ? Visibility.Collapsed
+                : (object) ( values.Select ( GetBool ).All ( b => b )
                 ? Visibility.Visible
-                : Visibility.Collapsed;
+                : Visibility.Collapsed );
         }
 
         public object [ ] ConvertBack ( object value, Type [ ] targetTypes, object parameter, CultureInfo culture )
@@ -25,12 +24,7 @@ namespace Dragablz.Converters
 
         private static bool GetBool ( object value )
         {
-            if ( value is bool )
-            {
-                return (bool) value;
-            }
-
-            return false;
+            return value is bool boolean && boolean;
         }
     }
 }

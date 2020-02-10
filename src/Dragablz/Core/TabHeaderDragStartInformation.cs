@@ -4,48 +4,25 @@ namespace Dragablz.Core
 {
     internal class TabHeaderDragStartInformation
     {
-        private readonly DragablzItem _dragItem;
-        private readonly double _dragablzItemsControlHorizontalOffset;
-        private readonly double _dragablzItemControlVerticalOffset;
-        private readonly double _dragablzItemHorizontalOffset;
-        private readonly double _dragablzItemVerticalOffset;
-
         public TabHeaderDragStartInformation (
             DragablzItem dragItem,
             double dragablzItemsControlHorizontalOffset, double dragablzItemControlVerticalOffset, double dragablzItemHorizontalOffset, double dragablzItemVerticalOffset )
         {
-            if ( dragItem == null ) throw new ArgumentNullException ( "dragItem" );
-
-            _dragItem = dragItem;
-            _dragablzItemsControlHorizontalOffset = dragablzItemsControlHorizontalOffset;
-            _dragablzItemControlVerticalOffset = dragablzItemControlVerticalOffset;
-            _dragablzItemHorizontalOffset = dragablzItemHorizontalOffset;
-            _dragablzItemVerticalOffset = dragablzItemVerticalOffset;
+            DragItem = dragItem ?? throw new ArgumentNullException ( nameof ( dragItem ) );
+            DragablzItemsControlHorizontalOffset = dragablzItemsControlHorizontalOffset;
+            DragablzItemControlVerticalOffset = dragablzItemControlVerticalOffset;
+            DragablzItemHorizontalOffset = dragablzItemHorizontalOffset;
+            DragablzItemVerticalOffset = dragablzItemVerticalOffset;
         }
 
-        public double DragablzItemsControlHorizontalOffset
-        {
-            get { return _dragablzItemsControlHorizontalOffset; }
-        }
+        public double DragablzItemsControlHorizontalOffset { get; }
 
-        public double DragablzItemControlVerticalOffset
-        {
-            get { return _dragablzItemControlVerticalOffset; }
-        }
+        public double DragablzItemControlVerticalOffset { get; }
 
-        public double DragablzItemHorizontalOffset
-        {
-            get { return _dragablzItemHorizontalOffset; }
-        }
+        public double DragablzItemHorizontalOffset { get; }
 
-        public double DragablzItemVerticalOffset
-        {
-            get { return _dragablzItemVerticalOffset; }
-        }
+        public double DragablzItemVerticalOffset { get; }
 
-        public DragablzItem DragItem
-        {
-            get { return _dragItem; }
-        }
+        public DragablzItem DragItem { get; }
     }
 }

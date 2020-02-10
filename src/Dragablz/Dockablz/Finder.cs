@@ -6,7 +6,7 @@ namespace Dragablz.Dockablz
     {
         internal static LocationReport Find ( TabablzControl tabablzControl )
         {
-            if ( tabablzControl == null ) throw new ArgumentNullException ( "tabablzControl" );
+            if ( tabablzControl == null ) throw new ArgumentNullException ( nameof ( tabablzControl ) );
 
             var locationReportBuilder = new LocationReportBuilder(tabablzControl);
 

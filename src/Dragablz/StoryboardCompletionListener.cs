@@ -11,11 +11,8 @@ namespace Dragablz
 
         public StoryboardCompletionListener ( Storyboard storyboard, Action < Storyboard > continuation )
         {
-            if ( storyboard == null ) throw new ArgumentNullException ( "storyboard" );
-            if ( continuation == null ) throw new ArgumentNullException ( "continuation" );
-
-            _storyboard = storyboard;
-            _continuation = continuation;
+            _storyboard = storyboard ?? throw new ArgumentNullException ( nameof ( storyboard ) );
+            _continuation = continuation ?? throw new ArgumentNullException ( nameof ( continuation ) );
 
             _storyboard.Completed += StoryboardOnCompleted;
         }
@@ -29,8 +26,6 @@ namespace Dragablz
 
     internal static class StoryboardCompletionListenerExtension
     {
-        private static readonly IDictionary<Storyboard, Action < Storyboard >> ContinuationIndex = new Dictionary<Storyboard, Action < Storyboard >> ( );
-
         public static void WhenComplete ( this Storyboard storyboard, Action < Storyboard > continuation )
         {
             // ReSharper disable once ObjectCreationAsStatement

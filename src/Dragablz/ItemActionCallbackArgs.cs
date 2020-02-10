@@ -7,35 +7,18 @@ namespace Dragablz
 
     public class ItemActionCallbackArgs < TOwner > where TOwner : FrameworkElement
     {
-        private readonly Window _window;
-        private readonly TOwner _owner;
-        private readonly DragablzItem _dragablzItem;
-
         public ItemActionCallbackArgs ( Window window, TOwner owner, DragablzItem dragablzItem )
         {
-            if ( window == null ) throw new ArgumentNullException ( "window" );
-            if ( owner == null ) throw new ArgumentNullException ( "owner" );
-            if ( dragablzItem == null ) throw new ArgumentNullException ( "dragablzItem" );
-
-            _window = window;
-            _owner = owner;
-            _dragablzItem = dragablzItem;
+            Window = window ?? throw new ArgumentNullException ( nameof ( window ) );
+            Owner = owner ?? throw new ArgumentNullException ( nameof ( owner ) );
+            DragablzItem = dragablzItem ?? throw new ArgumentNullException ( nameof ( dragablzItem ) );
         }
 
-        public Window Window
-        {
-            get { return _window; }
-        }
+        public Window Window { get; }
 
-        public TOwner Owner
-        {
-            get { return _owner; }
-        }
+        public TOwner Owner { get; }
 
-        public DragablzItem DragablzItem
-        {
-            get { return _dragablzItem; }
-        }
+        public DragablzItem DragablzItem { get; }
 
         public bool IsCancelled { get; private set; }
 

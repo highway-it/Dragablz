@@ -40,20 +40,17 @@ namespace Dragablz.Themes
             foreach ( var ripple in PressedInstances )
             {
                 // adjust the transition scale time according to the current animated scale
-                var scaleTrans = ripple.Template.FindName("ScaleTransform", ripple) as ScaleTransform;
-                if ( scaleTrans != null )
+                if ( ripple.Template.FindName ( "ScaleTransform", ripple ) is ScaleTransform scaleTrans )
                 {
                     double currentScale = scaleTrans.ScaleX;
                     var newTime = TimeSpan.FromMilliseconds(300 * (1.0 - currentScale));
 
                     // change the scale animation according to the current scale
-                    var scaleXKeyFrame = ripple.Template.FindName("MousePressedToNormalScaleXKeyFrame", ripple) as EasingDoubleKeyFrame;
-                    if ( scaleXKeyFrame != null )
+                    if ( ripple.Template.FindName ( "MousePressedToNormalScaleXKeyFrame", ripple ) is EasingDoubleKeyFrame scaleXKeyFrame )
                     {
                         scaleXKeyFrame.KeyTime = KeyTime.FromTimeSpan ( newTime );
                     }
-                    var scaleYKeyFrame = ripple.Template.FindName("MousePressedToNormalScaleYKeyFrame", ripple) as EasingDoubleKeyFrame;
-                    if ( scaleYKeyFrame != null )
+                    if ( ripple.Template.FindName ( "MousePressedToNormalScaleYKeyFrame", ripple ) is EasingDoubleKeyFrame scaleYKeyFrame )
                     {
                         scaleYKeyFrame.KeyTime = KeyTime.FromTimeSpan ( newTime );
                     }
@@ -96,7 +93,7 @@ namespace Dragablz.Themes
 
             if ( RippleAssist.GetIsCentered ( this ) )
             {
-                var innerContent = (Content as FrameworkElement);
+                var innerContent = Content as FrameworkElement;
 
                 if ( innerContent != null )
                 {
@@ -194,7 +191,7 @@ namespace Dragablz.Themes
 
         private void OnSizeChanged ( object sender, SizeChangedEventArgs sizeChangedEventArgs )
         {
-            var innerContent = (Content as FrameworkElement);
+            var innerContent = Content as FrameworkElement;
 
             double width, height;
 

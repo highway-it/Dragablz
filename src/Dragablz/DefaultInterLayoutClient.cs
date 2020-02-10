@@ -6,9 +6,9 @@ using System.Windows.Data;
 namespace Dragablz
 {
     /// <summary>
-    /// Provides a simple implementation of <see cref="IInterLayoutClient"/>, but only really useful if
-    /// <see cref="TabItem"/> instances are specified in XAML.  If you are binding via ItemsSource then
-    /// you most likely want to create your own implementation of <see cref="IInterLayoutClient"/>.
+    /// Provides a simple implementation of <see cref="IInterLayoutClient" />, but only really useful if
+    /// <see cref="TabItem" /> instances are specified in XAML.  If you are binding via ItemsSource then
+    /// you most likely want to create your own implementation of <see cref="IInterLayoutClient" />.
     /// </summary>
     public class DefaultInterLayoutClient : IInterLayoutClient
     {
@@ -37,7 +37,8 @@ namespace Dragablz
             while ( localValueEnumerator.MoveNext ( ) )
             {
                 if ( localValueEnumerator.Current.Property.ReadOnly ||
-                    localValueEnumerator.Current.Value is FrameworkElement ) continue;
+                    localValueEnumerator.Current.Value is FrameworkElement )
+                    continue;
 
                 if ( ! ( localValueEnumerator.Current.Value is BindingExpressionBase ) )
                     to.SetCurrentValue ( localValueEnumerator.Current.Property, localValueEnumerator.Current.Value );

@@ -19,9 +19,9 @@ namespace Dragablz.Savablz
         /// <typeparam name="TTabViewModel">The type of tab view model, currently displayed in the app.</typeparam>
         /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
         /// <returns>The state of all windows</returns>
-        public static IEnumerable<LayoutWindowState<TTabModel, object?>> GetWindowsState < TTabModel, TTabViewModel > ( Func < TTabViewModel, TTabModel > tabContentModelConverter )
+        public static IEnumerable < LayoutWindowState < TTabModel, object > > GetWindowsState < TTabModel, TTabViewModel > ( Func < TTabViewModel, TTabModel > tabContentModelConverter )
         {
-            return Layout.GetLoadedInstances ( ).Select ( layout => GetLayoutState ( layout, tabContentModelConverter, window => (object?) null ) );
+            return Layout.GetLoadedInstances ( ).Select ( layout => GetLayoutState ( layout, tabContentModelConverter, window => (object) null ) );
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Dragablz.Savablz
         /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
         /// <param name="windowSettingsConverter">The function that serializes custom window settings</param>
         /// <returns>The state of all windows</returns>
-        public static IEnumerable<LayoutWindowState < TTabModel, TWindowSettings >> GetWindowsState < TTabModel, TTabViewModel, TWindowSettings > ( Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
+        public static IEnumerable < LayoutWindowState < TTabModel, TWindowSettings > > GetWindowsState < TTabModel, TTabViewModel, TWindowSettings > ( Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
         {
             return Layout.GetLoadedInstances ( ).Select ( layout => GetLayoutState ( layout, tabContentModelConverter, windowSettingsConverter ) );
         }
@@ -116,7 +116,7 @@ namespace Dragablz.Savablz
         /// <param name="windowInitialTabablzControl">The initial tabablz control that will be used for restore</param>
         /// <param name="layoutWindowsState">The state of the windows</param>
         /// <param name="viewModelFactory">The function that creates the view model based on a model</param>
-        public static void RestoreWindowsState < TTabModel, TTabViewModel > ( TabablzControl windowInitialTabablzControl, LayoutWindowState<TTabModel, object?> [ ] layoutWindowsState, Func < TTabModel, TTabViewModel > viewModelFactory )
+        public static void RestoreWindowsState < TTabModel, TTabViewModel > ( TabablzControl windowInitialTabablzControl, LayoutWindowState<TTabModel, object> [ ] layoutWindowsState, Func < TTabModel, TTabViewModel > viewModelFactory )
         {
             RestoreWindowsState ( windowInitialTabablzControl, layoutWindowsState, viewModelFactory, ( window, settings ) => { } );
         }
@@ -133,7 +133,7 @@ namespace Dragablz.Savablz
         /// <param name="applyWindowSettings">The function that applies custom window settings</param>
         public static void RestoreWindowsState < TTabModel, TTabViewModel, TWindowSettings > ( TabablzControl windowInitialTabablzControl, LayoutWindowState < TTabModel, TWindowSettings > [ ] layoutWindowsState, Func < TTabModel, TTabViewModel > viewModelFactory, Action < Window, TWindowSettings > applyWindowSettings )
         {
-            if ( ! layoutWindowsState.Any ( ) )
+            if ( layoutWindowsState.Length == 0 )
                 return;
 
             var mainWindowState = layoutWindowsState [ 0 ];

@@ -4,20 +4,16 @@ namespace Dragablz.Dockablz
 {
     internal class LocationReportBuilder
     {
-        private readonly TabablzControl _targetTabablzControl;
         private Branch _branch;
         private bool _isSecondLeaf;
         private Layout _layout;
 
         public LocationReportBuilder ( TabablzControl targetTabablzControl )
         {
-            _targetTabablzControl = targetTabablzControl;
+            TargetTabablzControl = targetTabablzControl;
         }
 
-        public TabablzControl TargetTabablzControl
-        {
-            get { return _targetTabablzControl; }
-        }
+        public TabablzControl TargetTabablzControl { get; }
 
         public bool IsFound { get; private set; }
 
@@ -33,14 +29,13 @@ namespace Dragablz.Dockablz
 
         public void MarkFound ( Branch branch, bool isSecondLeaf )
         {
-            if ( branch == null ) throw new ArgumentNullException ( "branch" );
             if ( IsFound )
                 throw new InvalidOperationException ( "Already found." );
 
             IsFound = true;
 
             _layout = CurrentLayout;
-            _branch = branch;
+            _branch = branch ?? throw new ArgumentNullException ( nameof ( branch ) );
             _isSecondLeaf = isSecondLeaf;
         }
 
@@ -48,7 +43,7 @@ namespace Dragablz.Dockablz
 
         public LocationReport ToLocationReport ( )
         {
-            return new LocationReport ( _targetTabablzControl, _layout, _branch, _isSecondLeaf );
+            return new LocationReport ( TargetTabablzControl, _layout, _branch, _isSecondLeaf );
         }
     }
 }
