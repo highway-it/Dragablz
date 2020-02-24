@@ -39,16 +39,6 @@ namespace Dragablz
         /// </summary>
         public const string ItemsHolderPartName = "PART_ItemsHolder";
 
-        /// <summary>
-        /// Routed command which can be used to close a tab.
-        /// </summary>
-        public static readonly RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(TabablzControl));
-
-        /// <summary>
-        /// Routed command which can be used to add a new tab.  See <see cref="NewItemFactory" />.
-        /// </summary>
-        public static readonly RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(TabablzControl));
-
         private static readonly HashSet < TabablzControl > LoadedInstances = new HashSet < TabablzControl > ( );
         private static readonly HashSet < TabablzControl > VisibleInstances = new HashSet < TabablzControl > ( );
 
@@ -64,7 +54,8 @@ namespace Dragablz
         static TabablzControl ( )
         {
             DefaultStyleKeyProperty.OverrideMetadata ( typeof ( TabablzControl ), new FrameworkPropertyMetadata ( typeof ( TabablzControl ) ) );
-            CommandManager.RegisterClassCommandBinding ( typeof ( FrameworkElement ), new CommandBinding ( CloseItemCommand, CloseItemClassHandler, CloseItemCanExecuteClassHandler ) );
+
+            RegisterClassCommandBindings ( );
         }
 
         /// <summary>
@@ -1066,10 +1057,7 @@ namespace Dragablz
         private void ItemDragDelta ( object sender, DragablzDragDeltaEventArgs e )
         {
             if ( ! IsMyItem ( e.DragablzItem ) ) return;
-            if ( FixedHeaderCount > 0 &&
-                _dragablzItemsControl.ItemsOrganiser.Sort ( _dragablzItemsControl.DragablzItems ( ) )
-                    .Take ( FixedHeaderCount )
-                    .Contains ( e.DragablzItem ) )
+            if ( IsFixedItem ( e.DragablzItem ) )
                 return;
 
             if ( _tabHeaderDragStartInformation == null ||
@@ -1079,6 +1067,15 @@ namespace Dragablz
                 throw new InvalidOperationException ( "An InterTabClient must be provided on an InterTabController." );
 
             MonitorBreach ( e );
+        }
+
+        private bool IsFixedItem ( DragablzItem dragablzItem )
+        {
+            return FixedHeaderCount > 0 &&
+                   _dragablzItemsControl.ItemsOrganiser
+                                        .Sort ( _dragablzItemsControl.DragablzItems ( ) )
+                                        .Take ( FixedHeaderCount )
+                                        .Contains ( dragablzItem );
         }
 
         private bool IsMyItem ( DragablzItem item )
@@ -1389,43 +1386,6 @@ namespace Dragablz
 
             if ( ! cancel )
                 owner.RemoveItem ( item );
-        }
-
-        private static void CloseItemCanExecuteClassHandler ( object sender, CanExecuteRoutedEventArgs e )
-        {
-            e.CanExecute = FindOwner ( e.Parameter, e.OriginalSource ) != null;
-        }
-
-        private static void CloseItemClassHandler ( object sender, ExecutedRoutedEventArgs e )
-        {
-            var owner = FindOwner(e.Parameter, e.OriginalSource);
-
-            if ( owner == null ) throw new ApplicationException ( "Unable to ascertain DragablzItem to close." );
-
-            CloseItem ( owner.Item1, owner.Item2 );
-        }
-
-        private static Tuple < DragablzItem, TabablzControl > FindOwner ( object eventParameter, object eventOriginalSource )
-        {
-            if ( ! ( eventParameter is DragablzItem dragablzItem ) )
-            {
-                var dependencyObject = eventOriginalSource as DependencyObject;
-                dragablzItem = dependencyObject.VisualTreeAncestory ( ).OfType<DragablzItem> ( ).FirstOrDefault ( );
-                if ( dragablzItem == null )
-                {
-                    var popup = dependencyObject.LogicalTreeAncestory ( ).OfType < Popup > ( ).LastOrDefault ( );
-                    if ( popup?.PlacementTarget != null )
-                    {
-                        dragablzItem = popup.PlacementTarget.VisualTreeAncestory ( ).OfType<DragablzItem> ( ).FirstOrDefault ( );
-                    }
-                }
-            }
-
-            if ( dragablzItem == null ) return null;
-
-            var tabablzControl = LoadedInstances.FirstOrDefault(tc => tc.IsMyItem(dragablzItem));
-
-            return tabablzControl == null ? null : new Tuple < DragablzItem, TabablzControl > ( dragablzItem, tabablzControl );
         }
 
         private void AddItemHandler ( object sender, ExecutedRoutedEventArgs e )
