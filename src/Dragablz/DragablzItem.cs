@@ -465,6 +465,23 @@ namespace Dragablz
             return (bool) element.GetValue ( IsCustomThumbProperty );
         }
 
+        public static readonly DependencyProperty CloseOnMiddleClickProperty = DependencyProperty.Register(
+            nameof(CloseOnMiddleClick), typeof(bool), typeof(DragablzItem), new FrameworkPropertyMetadata(false));
+
+        public bool CloseOnMiddleClick
+        {
+            get { return (bool) GetValue ( CloseOnMiddleClickProperty ); }
+            set { SetValue ( CloseOnMiddleClickProperty, value ); }
+        }
+
+        protected override void OnMouseDown ( MouseButtonEventArgs e )
+        {
+            base.OnMouseDown ( e );
+
+            if ( ! e.Handled && e.ChangedButton == MouseButton.Middle && CloseOnMiddleClick )
+                TabablzControl.CloseItemCommand.Execute ( this, this );
+        }
+
         private bool _isTemplateThumbWithMouseAfterSeize = false;
 
         public override void OnApplyTemplate ( )
