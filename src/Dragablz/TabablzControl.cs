@@ -1,7 +1,4 @@
-﻿using Dragablz.Core;
-using Dragablz.Dockablz;
-using Dragablz.Referenceless;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -15,17 +12,22 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using Dragablz.Core;
+using Dragablz.Dockablz;
+using Dragablz.Referenceless;
+
 namespace Dragablz
 {
-    //original code specific to keeping visual tree "alive" sourced from http://stackoverflow.com/questions/12432062/binding-to-itemssource-of-tabcontrol-in-wpf
-
     /// <summary>
     /// Extended tab control which supports tab repositioning, and drag and drop.  Also
     /// uses the common WPF technique for pesisting the visual tree across tabs.
     /// </summary>
-    [TemplatePart ( Name = HeaderItemsControlPartName, Type = typeof ( DragablzItemsControl ) )]
-    [TemplatePart ( Name = ItemsHolderPartName, Type = typeof ( Panel ) )]
-    public class TabablzControl : TabControl
+    /// <remarks>
+    /// Original code specific to keeping visual tree "alive" sourced from http://stackoverflow.com/questions/12432062/binding-to-itemssource-of-tabcontrol-in-wpf
+    /// </remarks>
+    [ TemplatePart ( Name = HeaderItemsControlPartName, Type = typeof ( DragablzItemsControl ) ) ]
+    [ TemplatePart ( Name = ItemsHolderPartName, Type = typeof ( Panel ) ) ]
+    public partial class TabablzControl : TabControl
     {
         /// <summary>
         /// Template part.
@@ -83,80 +85,6 @@ namespace Dragablz
 
         public static readonly DependencyProperty CustomHeaderItemStyleProperty = DependencyProperty.Register(
             nameof(CustomHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
-
-        /// <summary>
-        /// Helper method which returns all the currently loaded instances.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable < TabablzControl > GetLoadedInstances ( )
-        {
-            return LoadedInstances.Union ( VisibleInstances ).Distinct ( ).ToList ( );
-        }
-
-        /// <summary>
-        /// Helper method to close all tabs where the item is the tab's content (helpful with MVVM scenarios)
-        /// </summary>
-        /// <remarks>
-        /// In MVVM scenarios where you don't want to bind the routed command to your ViewModel,
-        /// with this helper method and embedding the TabablzControl in a UserControl, you can keep
-        /// the View-specific dependencies out of the ViewModel.
-        /// </remarks>
-        /// <param name="tabContentItem">An existing Tab item content (a ViewModel in MVVM scenarios) which is backing a tab control</param>
-        public static void CloseItem ( object tabContentItem )
-        {
-            if ( tabContentItem == null ) return; //Do nothing.
-
-            //Find all loaded TabablzControl instances with tabs backed by this item and close them
-            foreach ( var tabWithItemContent in
-                GetLoadedInstances ( ).SelectMany ( tc =>
-                    tc._dragablzItemsControl.DragablzItems ( ).Where ( di => di.Content.Equals ( tabContentItem ) ).Select ( di => new { tc, di } ) ) )
-            {
-                CloseItem ( tabWithItemContent.di, tabWithItemContent.tc );
-            }
-        }
-
-        /// <summary>
-        /// Helper method to add an item next to an existing item.
-        /// </summary>
-        /// <remarks>
-        /// Due to the organisable nature of the control, the order of items may not reflect the order in the source collection.  This method
-        /// will add items to the source collection, managing their initial appearance on screen at the same time.
-        /// If you are using a <see cref="InterTabController.InterTabClient" /> this will be used to add the item into the source collection.
-        /// </remarks>
-        /// <param name="item">New item to add.</param>
-        /// <param name="nearItem">Existing object/tab item content which defines which tab control should be used to add the object.</param>
-        /// <param name="addLocationHint">Location, relative to the <paramref name="nearItem" /> object</param>
-        public static void AddItem ( object item, object nearItem, AddLocationHint addLocationHint )
-        {
-            if ( nearItem == null ) throw new ArgumentNullException ( nameof ( nearItem ) );
-
-            var existingLocation = GetLoadedInstances ( ).SelectMany(tabControl =>
-                (tabControl.ItemsSource ?? tabControl.Items).OfType < object > ( )
-                    .Select(existingObject => new {tabControl, existingObject}))
-                .SingleOrDefault(a => nearItem.Equals(a.existingObject));
-
-            if ( existingLocation == null )
-                throw new ArgumentException ( "Did not find precisely one instance of adjacentTo", nameof ( nearItem ) );
-
-            existingLocation.tabControl.AddToSource ( item );
-            existingLocation.tabControl._dragablzItemsControl?.MoveItem ( new MoveItemRequest ( item, nearItem, addLocationHint ) );
-        }
-
-        /// <summary>
-        /// Finds and selects an item.
-        /// </summary>
-        /// <param name="item"></param>
-        public static void SelectItem ( object item )
-        {
-            var existingLocation = GetLoadedInstances ( ).SelectMany(tabControl =>
-                (tabControl.ItemsSource ?? tabControl.Items).OfType < object > ( )
-                    .Select(existingObject => new {tabControl, existingObject}))
-                    .FirstOrDefault(a => item.Equals(a.existingObject));
-
-            if ( existingLocation == null ) return;
-
-            existingLocation.tabControl.SelectedItem = item;
-        }
 
         /// <summary>
         /// Style to apply to header items which are not their own item container (<see cref="TabItem" />).  Typically items bound via the <see cref="ItemsSource" /> will use this style.
