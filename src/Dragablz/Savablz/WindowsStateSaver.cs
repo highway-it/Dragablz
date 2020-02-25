@@ -1,9 +1,10 @@
-﻿using Dragablz.Dockablz;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+
+using Dragablz.Dockablz;
 
 namespace Dragablz.Savablz
 {
@@ -39,7 +40,40 @@ namespace Dragablz.Savablz
         }
 
         /// <summary>
-        /// Gets the state of a single window.
+        /// Gets the state of a single window in the application.
+        /// </summary>
+        /// <typeparam name="TTabModel">The type of tab model</typeparam>
+        /// <typeparam name="TTabViewModel">The type of tab view model, currently displayed in the app.</typeparam>
+        /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
+        /// <returns>The state of the window</returns>
+        public static LayoutWindowState < TTabModel, object > GetWindowState < TTabModel, TTabViewModel > ( Window window, Func < TTabViewModel, TTabModel > tabContentModelConverter )
+        {
+            return GetWindowState ( window, tabContentModelConverter, window => (object) null );
+        }
+
+        /// <summary>
+        /// Gets the state of a single window in the application.
+        /// </summary>
+        /// <typeparam name="TTabModel">The type of tab model</typeparam>
+        /// <typeparam name="TTabViewModel">The type of tab view model, currently displayed in the app.</typeparam>
+        /// <typeparam name="TWindowSettings">The type of custom window settings.</typeparam>
+        /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
+        /// <param name="windowSettingsConverter">The function that serializes custom window settings</param>
+        /// <returns>The state of the window</returns>
+        public static LayoutWindowState < TTabModel, TWindowSettings > GetWindowState < TTabModel, TTabViewModel, TWindowSettings > ( Window window, Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
+        {
+            if ( window == null )
+                throw new ArgumentNullException ( nameof ( window ) );
+
+            var layout = Layout.GetLoadedInstances ( ).FirstOrDefault ( layout => Window.GetWindow ( layout ) == window );
+            if ( layout == null )
+                throw new InvalidOperationException ( "The window is not bound to any layout" );
+
+            return GetLayoutState ( layout, tabContentModelConverter, windowSettingsConverter );
+        }
+
+        /// <summary>
+        /// Gets the state of a single window from its layout.
         /// </summary>
         /// <typeparam name="TTabModel">The type of tab model</typeparam>
         /// <typeparam name="TTabViewModel">The type of tab view model, currently displayed in the app.</typeparam>
@@ -48,7 +82,7 @@ namespace Dragablz.Savablz
         /// <param name="tabContentModelConverter">The converter that transforms tab view models to models</param>
         /// <param name="windowSettingsConverter">The function that serializes custom window settings</param>
         /// <returns>The state of the specified window</returns>
-        private static LayoutWindowState < TTabModel, TWindowSettings > GetLayoutState < TTabModel, TTabViewModel, TWindowSettings > ( Layout layout, Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
+        public static LayoutWindowState < TTabModel, TWindowSettings > GetLayoutState < TTabModel, TTabViewModel, TWindowSettings > ( Layout layout, Func < TTabViewModel, TTabModel > tabContentModelConverter, Func < Window, TWindowSettings > windowSettingsConverter )
         {
             var window = Window.GetWindow ( layout ) ?? throw new InvalidOperationException ( "The layout is not bound to any window" );
             var root   = (BranchItemState < TTabModel >) null;
