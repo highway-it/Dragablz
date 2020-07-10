@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 using Dragablz.Dockablz;
@@ -92,7 +94,7 @@ namespace Dragablz.Savablz
                 tabablzControl => root = new BranchItemState < TTabModel > ( null, GetTabSetState ( tabablzControl, tabContentModelConverter ) )
             );
 
-            return new LayoutWindowState < TTabModel, TWindowSettings > ( window.Left, window.Top, window.Width, window.Height, window.WindowState, root, windowSettingsConverter ( window ) );
+            return new LayoutWindowState < TTabModel, TWindowSettings > ( GetWindowPlacement ( window ), root, windowSettingsConverter ( window ) );
         }
 
         /// <summary>
@@ -175,11 +177,7 @@ namespace Dragablz.Savablz
             if ( mainWindow == null )
                 throw new InvalidOperationException ( "The TabablzControl is not bound to any window" );
 
-            mainWindow.Width = mainWindowState.Width;
-            mainWindow.Height = mainWindowState.Height;
-            mainWindow.Left = mainWindowState.X;
-            mainWindow.Top = mainWindowState.Y;
-            mainWindow.WindowState = mainWindowState.WindowState;
+            RestoreWindowPlacement ( mainWindow, mainWindowState.Placement );
 
             using ( new WindowRestoringState ( mainWindow ) )
             {
@@ -195,11 +193,7 @@ namespace Dragablz.Savablz
                                                                                         interTabController.Partition,
                                                                                         windowInitialTabablzControl );
 
-                newHost.Container.Width = windowState.Width;
-                newHost.Container.Height = windowState.Height;
-                newHost.Container.Left = windowState.X;
-                newHost.Container.Top = windowState.Y;
-                newHost.Container.WindowState = windowState.WindowState;
+                RestoreWindowPlacement ( newHost.Container, windowState.Placement );
 
                 using ( new WindowRestoringState ( newHost.Container ) )
                 {
@@ -283,5 +277,80 @@ namespace Dragablz.Savablz
                 window.Opacity = 1;
             }
         }
+
+        private static byte [ ] GetWindowPlacement ( Window window )
+        {
+            GetWindowPlacement ( new WindowInteropHelper ( window ).Handle, out var placement );
+
+            var length  = Marshal.SizeOf < WINDOWPLACEMENT > ( );
+            var data    = new byte [ length ];
+            var pointer = Marshal.AllocHGlobal ( length );
+
+            Marshal.StructureToPtr ( placement, pointer, true );
+            Marshal.Copy           ( pointer, data, 0, length );
+            Marshal.FreeHGlobal    ( pointer );
+
+            return data;
+        }
+
+        private static void RestoreWindowPlacement ( Window window, byte [ ] windowPlacement )
+        {
+            var length = Marshal.SizeOf < WINDOWPLACEMENT > ( );
+            if ( windowPlacement?.Length != length )
+                return;
+
+            var pointer = Marshal.AllocHGlobal ( length );
+
+            Marshal.Copy ( windowPlacement, 0, pointer, length );
+
+            var placement = Marshal.PtrToStructure < WINDOWPLACEMENT > ( pointer );
+
+            Marshal.FreeHGlobal ( pointer );
+
+            if ( placement.ShowCmd == SW_SHOWMINIMIZED )
+                placement.ShowCmd = SW_SHOWNORMAL;
+
+            window.SourceInitialized += RestoreWindowPlacement;
+
+            void RestoreWindowPlacement ( object sender, EventArgs e )
+            {
+                var window = (Window) sender;
+
+                window.SourceInitialized -= RestoreWindowPlacement;
+
+                try   { SetWindowPlacement ( new WindowInteropHelper ( window ).Handle, ref placement ); }
+                catch { }
+            }
+        }
+
+        private const int SW_SHOWNORMAL    = 1;
+        private const int SW_SHOWMINIMIZED = 2;
+
+        [ DllImport ( "user32" ) ] private static extern bool GetWindowPlacement ( IntPtr hWnd, [ Out ] out WINDOWPLACEMENT placement );
+        [ DllImport ( "user32" ) ] private static extern bool SetWindowPlacement ( IntPtr hWnd, [ In  ] ref WINDOWPLACEMENT placement );
+
+        #pragma warning disable CA1815 // Override equals and operator equals on value types
+
+        [ StructLayout ( LayoutKind.Sequential ) ]
+        private struct WINDOWPLACEMENT
+        {
+            public int   Length, Flags, ShowCmd;
+            public POINT MinPosition, MaxPosition;
+            public RECT  NormalPosition;
+        }
+
+        [ StructLayout ( LayoutKind.Sequential ) ]
+        private struct POINT
+        {
+            public int X, Y;
+        }
+
+        [ StructLayout ( LayoutKind.Sequential ) ]
+        private struct RECT
+        {
+            public int Left, Top, Right, Bottom;
+        }
+
+        #pragma warning restore CA1815 // Override equals and operator equals on value types
     }
 }

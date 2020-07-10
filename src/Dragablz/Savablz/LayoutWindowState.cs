@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace Dragablz.Savablz
+﻿namespace Dragablz.Savablz
 {
     /// <summary>
     /// Represents the state of a window
@@ -17,47 +15,20 @@ namespace Dragablz.Savablz
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutWindowState" /> class.
         /// </summary>
-        /// <param name="x">The X position of the window</param>
-        /// <param name="y">The Y position of the window</param>
-        /// <param name="width">The window width</param>
-        /// <param name="height">The window height</param>
+        /// <param name="placement">The window placement</param>
         /// <param name="windowState">The window state</param>
         /// <param name="child">The root of this layout</param>
-        public LayoutWindowState ( double x, double y, double width, double height, WindowState windowState, BranchItemState < TTabModel > child, TWindowSettings settings )
+        public LayoutWindowState ( byte [ ] placement, BranchItemState < TTabModel > child, TWindowSettings settings )
         {
-            X = x;
-            Y = y;
-            Width = width;
-            Height = height;
-            WindowState = windowState;
-            Child = child;
-            Settings = settings;
+            Placement = placement;
+            Child     = child;
+            Settings  = settings;
         }
 
         /// <summary>
-        /// The window's X position
+        /// The window placement and state
         /// </summary>
-        public double X { get; set; }
-
-        /// <summary>
-        /// The window's Y position
-        /// </summary>
-        public double Y { get; set; }
-
-        /// <summary>
-        /// The window's width
-        /// </summary>
-        public double Width { get; set; }
-
-        /// <summary>
-        /// The window's height
-        /// </summary>
-        public double Height { get; set; }
-
-        /// <summary>
-        /// The window state (maximized, restored, minimize)
-        /// </summary>
-        public WindowState WindowState { get; set; }
+        public byte [ ] Placement { get; set; }
 
         /// <summary>
         /// The window settings
