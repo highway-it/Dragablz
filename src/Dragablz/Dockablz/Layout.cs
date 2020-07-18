@@ -699,7 +699,7 @@ namespace Dragablz.Dockablz
             if ( grandParent is Layout layout )
             {
                 layout.Content = survivingItem;
-                MarkItemLocations ( layout );
+                MarkItemLocations ( layout, true );
                 return true;
             }
 
@@ -708,9 +708,10 @@ namespace Dragablz.Dockablz
                 branch.SecondItem = survivingItem;
             else
                 branch.FirstItem = survivingItem;
+
             var rootLayout = branch.VisualTreeAncestory ( ).OfType < Layout > ( ).FirstOrDefault ( );
             if ( rootLayout != null )
-                MarkItemLocations ( rootLayout );
+                MarkItemLocations ( rootLayout, true );
 
             return true;
         }
@@ -1006,7 +1007,7 @@ namespace Dragablz.Dockablz
                 .Any ( t => t.InterTabController != null && t.InterTabController.Partition == Partition );
         }
 
-        private static void MarkItemLocations ( Layout layout )
+        private static void MarkItemLocations ( Layout layout, bool consolidating = false )
         {
             var layoutAccessor = layout.Query ( );
             if ( layoutAccessor.TabablzControl == null )
@@ -1034,6 +1035,9 @@ namespace Dragablz.Dockablz
                 SetIsTopRightItem ( tabablzControl, area.Top    == 0.0 &&
                                                     area.Right  == 1.0 );
             }
+
+            if ( consolidating )
+                layout.Dispatcher.BeginInvoke ( new Action ( ( ) => MarkItemLocations ( layout ) ), DispatcherPriority.Background );
         }
 
         private static Rect GetRelativeArea ( TabablzControl tabablzControl, FrameworkElement relativeTo )
