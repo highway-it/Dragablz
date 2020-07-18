@@ -60,7 +60,7 @@ namespace Dragablz.Dockablz
             Loaded += ( sender, args ) =>
             {
                 LoadedLayouts.Add ( this );
-                MarkTopLeftItem ( this );
+                MarkTopItems ( this );
             };
             Unloaded += ( sender, args ) => LoadedLayouts.Remove ( this );
 
@@ -185,7 +185,7 @@ namespace Dragablz.Dockablz
             tabablzControl.Dispatcher.BeginInvoke ( new Action ( ( ) =>
                 {
                     tabablzControl.SetCurrentValue ( Selector.SelectedItemProperty, selectedItem );
-                    MarkTopLeftItem ( locationReport.RootLayout );
+                    MarkTopItems ( locationReport.RootLayout );
                 } ),
                 DispatcherPriority.Loaded );
 
@@ -397,6 +397,32 @@ namespace Dragablz.Dockablz
             return (bool) element.GetValue ( IsTopLeftItemProperty );
         }
 
+        private static readonly DependencyPropertyKey IsTopRightItemPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                "IsTopRightItem", typeof(bool), typeof(Layout),
+                new PropertyMetadata(default(bool)));
+
+        /// <summary>
+        /// Indicates if an item/tab control within a layout is contained at the top most and right most branch item.
+        /// </summary>
+        public static readonly DependencyProperty IsTopRightItemProperty = IsTopRightItemPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Indicates if an item/tab control within a layout is contained at the top most and right most branch item.
+        /// </summary>
+        private static void SetIsTopRightItem ( DependencyObject element, bool value )
+        {
+            element.SetValue ( IsTopRightItemPropertyKey, value );
+        }
+
+        /// <summary>
+        /// Indicates if an item/tab control within a layout is contained at the top most and right most branch item.
+        /// </summary>
+        public static bool GetIsTopRightItem ( DependencyObject element )
+        {
+            return (bool) element.GetValue ( IsTopRightItemProperty );
+        }
+
         /// <summary>When overridden in a derived class, is invoked whenever application code or internal processes call <see cref="M:System.Windows.FrameworkElement.ApplyTemplate" />.</summary>
         public override void OnApplyTemplate ( )
         {
@@ -554,7 +580,7 @@ namespace Dragablz.Dockablz
 
             SetCurrentValue ( ContentProperty, branchItem );
 
-            Dispatcher.BeginInvoke ( new Action ( ( ) => MarkTopLeftItem ( this ) ), DispatcherPriority.Loaded );
+            Dispatcher.BeginInvoke ( new Action ( ( ) => MarkTopItems ( this ) ), DispatcherPriority.Loaded );
         }
 
         internal static bool ConsolidateBranch ( DependencyObject redundantNode )
@@ -569,7 +595,7 @@ namespace Dragablz.Dockablz
             if ( grandParent is Layout layout )
             {
                 layout.Content = survivingItem;
-                MarkTopLeftItem ( layout );
+                MarkTopItems ( layout );
                 return true;
             }
 
@@ -580,7 +606,7 @@ namespace Dragablz.Dockablz
                 branch.FirstItem = survivingItem;
             var rootLayout = branch.VisualTreeAncestory ( ).OfType < Layout > ( ).FirstOrDefault ( );
             if ( rootLayout != null )
-                MarkTopLeftItem ( rootLayout );
+                MarkTopItems ( rootLayout );
 
             return true;
         }
@@ -876,24 +902,33 @@ namespace Dragablz.Dockablz
                 .Any ( t => t.InterTabController != null && t.InterTabController.Partition == Partition );
         }
 
-        private static void MarkTopLeftItem ( Layout layout )
+        private static void MarkTopItems ( Layout layout )
         {
             var layoutAccessor = layout.Query ( );
-            if ( layoutAccessor.TabablzControl != null )
+            if ( layoutAccessor.TabablzControl == null )
             {
+                var branchAccessor = layoutAccessor.BranchAccessor;
+                while ( branchAccessor != null && branchAccessor.FirstItemTabablzControl == null )
+                    branchAccessor = branchAccessor.FirstItemBranchAccessor;
+
+                foreach ( var tabablzControl in layoutAccessor.TabablzControls ( ) )
+                    SetIsTopLeftItem ( tabablzControl, branchAccessor != null && Equals ( tabablzControl, branchAccessor.FirstItemTabablzControl ) );
+            }
+            else
                 SetIsTopLeftItem ( layoutAccessor.TabablzControl, true );
-                return;
-            }
-            var branchAccessor = layoutAccessor.BranchAccessor;
-            while ( branchAccessor != null && branchAccessor.FirstItemTabablzControl == null )
-            {
-                branchAccessor = branchAccessor.FirstItemBranchAccessor;
-            }
 
             foreach ( var tabablzControl in layoutAccessor.TabablzControls ( ) )
-            {
-                SetIsTopLeftItem ( tabablzControl, branchAccessor != null && Equals ( tabablzControl, branchAccessor.FirstItemTabablzControl ) );
-            }
+                SetIsTopRightItem ( tabablzControl, IsTopRightItem ( tabablzControl ) );
+        }
+
+        private static bool IsTopRightItem ( TabablzControl tabablzControl )
+        {
+            const double Threshold = 20.0;
+
+            var window   = Window.GetWindow ( tabablzControl );
+            var topRight = tabablzControl.TranslatePoint ( new Point ( tabablzControl.ActualWidth + Threshold, -Threshold ), window );
+
+            return topRight.X >= window.ActualWidth && topRight.Y <= 0;
         }
 
         private void CanExecuteUnfloat ( object sender, CanExecuteRoutedEventArgs canExecuteRoutedEventArgs )
