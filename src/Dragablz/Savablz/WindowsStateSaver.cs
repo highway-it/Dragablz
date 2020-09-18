@@ -136,7 +136,7 @@ namespace Dragablz.Savablz
         /// <returns>The state of the tab set</returns>
         public static TabSetState < TTabModel > GetTabSetState < TTabModel, TTabViewModel > ( TabablzControl tabablzControl, Func < TTabViewModel, TTabModel > tabContentModelConverter )
         {
-            var tabItems      = tabablzControl.Items.Cast < TTabViewModel > ( ).Select ( tabContentModelConverter ).ToArray ( );
+            var tabItems      = tabablzControl.GetOrderedItems ( ).Cast < TTabViewModel > ( ).Select ( tabContentModelConverter ).ToArray ( );
             var selectedIndex = (int?) tabablzControl.SelectedIndex;
             if ( selectedIndex == -1 )
                 selectedIndex = null;
