@@ -809,7 +809,7 @@ namespace Dragablz.Dockablz
             //remove from source
             if ( ! ( ItemsControl.ItemsControlFromItemContainer ( dragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) ) throw new ApplicationException ( "Unable to determine source items control." );
             var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
-            layout._floatTransfer = FloatTransfer.TakeSnapshot ( dragablzItem, sourceTabControl );
+            layout._floatTransfer = FloatTransfer.TakeSnapshot ( dragablzItem );
             var floatingItemSnapShots = sourceTabControl.VisualTreeDepthFirstTraversal ( )
                     .OfType < Layout > ( )
                     .SelectMany(l => l.FloatingDragablzItems ( ).Select(FloatingItemSnapShot.Take))

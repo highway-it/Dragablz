@@ -83,39 +83,6 @@ namespace Dragablz
             set { SetValue ( BreachStrategyProperty, value ); }
         }
 
-        public static readonly DependencyProperty CustomHeaderItemStyleProperty = DependencyProperty.Register(
-            nameof(CustomHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
-
-        /// <summary>
-        /// Style to apply to header items which are not their own item container (<see cref="TabItem" />).  Typically items bound via the <see cref="ItemsSource" /> will use this style.
-        /// </summary>
-        [Obsolete]
-        public Style CustomHeaderItemStyle
-        {
-            get { return (Style) GetValue ( CustomHeaderItemStyleProperty ); }
-            set { SetValue ( CustomHeaderItemStyleProperty, value ); }
-        }
-
-        public static readonly DependencyProperty CustomHeaderItemTemplateProperty = DependencyProperty.Register(
-            nameof(CustomHeaderItemTemplate), typeof (DataTemplate), typeof (TabablzControl), new PropertyMetadata(default(DataTemplate)));
-
-        [Obsolete ( "Prefer HeaderItemTemplate" )]
-        public DataTemplate CustomHeaderItemTemplate
-        {
-            get { return (DataTemplate) GetValue ( CustomHeaderItemTemplateProperty ); }
-            set { SetValue ( CustomHeaderItemTemplateProperty, value ); }
-        }
-
-        public static readonly DependencyProperty DefaultHeaderItemStyleProperty = DependencyProperty.Register(
-            nameof(DefaultHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
-
-        [Obsolete]
-        public Style DefaultHeaderItemStyle
-        {
-            get { return (Style) GetValue ( DefaultHeaderItemStyleProperty ); }
-            set { SetValue ( DefaultHeaderItemStyleProperty, value ); }
-        }
-
         public static readonly DependencyProperty AdjacentHeaderItemOffsetProperty = DependencyProperty.Register(
             nameof(AdjacentHeaderItemOffset), typeof (double), typeof (TabablzControl), new PropertyMetadata(default(double), OnAdjacentHeaderItemOffsetChanged));
 
