@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace Dragablz
@@ -11,8 +10,6 @@ namespace Dragablz
     /// </summary>
     public class TabablzHeaderSizeConverter : IMultiValueConverter
     {
-        public Orientation Orientation { get; set; }
-
         /// <summary>
         /// The first value should be the total size available size, typically the parent control size.
         /// The second value should be from <see cref="DragablzItemsControl.ItemsPresenterWidthProperty" /> or (height equivalent)

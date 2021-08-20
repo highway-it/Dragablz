@@ -85,6 +85,28 @@ namespace Dragablz
             set { SetValue ( PositionMonitorProperty, value ); }
         }
 
+        public static readonly DependencyProperty AvailableWidthProperty =
+            DependencyProperty.Register(
+                nameof(AvailableWidth), typeof(double), typeof (DragablzItemsControl),
+                new FrameworkPropertyMetadata(double.PositiveInfinity, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+        public double AvailableWidth
+        {
+            get { return (double) GetValue ( AvailableWidthProperty ); }
+            set { SetValue ( AvailableWidthProperty, value ); }
+        }
+
+        public static readonly DependencyProperty AvailableHeightProperty =
+            DependencyProperty.Register(
+                nameof(AvailableHeight), typeof(double), typeof (DragablzItemsControl),
+                new FrameworkPropertyMetadata(double.PositiveInfinity, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+        public double AvailableHeight
+        {
+            get { return (double) GetValue ( AvailableHeightProperty ); }
+            set { SetValue ( AvailableHeightProperty, value ); }
+        }
+
         private static readonly DependencyPropertyKey ItemsPresenterWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 nameof(ItemsPresenterWidth), typeof(double), typeof (DragablzItemsControl),
@@ -175,28 +197,30 @@ namespace Dragablz
 
         protected override Size MeasureOverride ( Size constraint )
         {
-            if ( ItemsOrganiser == null ) return base.MeasureOverride ( constraint );
+            if ( ItemsOrganiser == null )
+                return base.MeasureOverride ( constraint );
 
             if ( LockedMeasure.HasValue )
             {
-                ItemsPresenterWidth = LockedMeasure.Value.Width;
+                ItemsPresenterWidth  = LockedMeasure.Value.Width;
                 ItemsPresenterHeight = LockedMeasure.Value.Height;
                 return LockedMeasure.Value;
             }
 
             var dragablzItems = DragablzItems ( ).ToList ( );
-            var maxConstraint = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            var maxConstraint = new Size ( double.PositiveInfinity, double.PositiveInfinity );
 
             ItemsOrganiser.Organise ( this, maxConstraint, dragablzItems );
-            var measure = ItemsOrganiser.Measure(this, new Size(ActualWidth, ActualHeight), dragablzItems);
+            var measure = ItemsOrganiser.Measure ( this, new Size ( ActualWidth, ActualHeight ), dragablzItems );
 
-            ItemsPresenterWidth = measure.Width;
+            ItemsPresenterWidth  = measure.Width;
             ItemsPresenterHeight = measure.Height;
 
-            var width = double.IsInfinity(constraint.Width) ? measure.Width : constraint.Width;
-            var height = double.IsInfinity(constraint.Height) ? measure.Height : constraint.Height;
+            var width  = double.IsInfinity ( constraint.Width  ) ? measure.Width  : constraint.Width;
+            var height = double.IsInfinity ( constraint.Height ) ? measure.Height : constraint.Height;
 
-            return new Size ( width, height );
+            return new Size ( Math.Min ( width,  AvailableWidth  ),
+                              Math.Min ( height, AvailableHeight ) );
         }
 
         internal void InstigateDrag ( object item, Action < DragablzItem > continuation )

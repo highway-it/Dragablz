@@ -5,6 +5,8 @@
                     xmlns:converters="clr-namespace:Dragablz.Converters"
                     xmlns:local="clr-namespace:Dragablz.Themes">
 
+    <dragablz:TabablzHeaderSizeConverter x:Key="TabablzHeaderSizeConverter" />
+
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:EqualityToVisibilityConverter x:Key="EqualityToVisibilityConverter" />
     <converters:BooleanAndToVisibilityConverter x:Key="BooleanAndToVisibilityConverter" />
@@ -603,18 +605,15 @@
                                                            KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"
                                                            ItemTemplate="{TemplateBinding HeaderItemTemplate}"
                                                            Style="{StaticResource TabablzDragablzItemsControlStyle}">
-                                <dragablz:DragablzItemsControl.MaxWidth>
-                                    <MultiBinding>
-                                        <MultiBinding.Converter>
-                                            <dragablz:TabablzHeaderSizeConverter Orientation="Horizontal" />
-                                        </MultiBinding.Converter>
+                                <dragablz:DragablzItemsControl.AvailableWidth>
+                                    <MultiBinding Converter="{StaticResource TabablzHeaderSizeConverter}">
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ActualWidth" />
                                         <Binding RelativeSource="{RelativeSource Self}" Path="ItemsPresenterWidth" />
                                         <Binding ElementName="PrefixContentControl" Path="ActualWidth" />
                                         <Binding ElementName="DefaultAddButton" Path="DesiredSize.Width" />
                                         <Binding ElementName="SuffixContentControl" Path="DesiredSize.Width" />
                                     </MultiBinding>
-                                </dragablz:DragablzItemsControl.MaxWidth>
+                                </dragablz:DragablzItemsControl.AvailableWidth>
                             </dragablz:DragablzItemsControl>
                             <Button Style="{StaticResource MaterialDesignAddItemCommandButtonStyle}"
                                     x:Name="DefaultAddButton"
@@ -694,18 +693,15 @@
                                                                    KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"
                                                                    ItemTemplate="{TemplateBinding HeaderItemTemplate}"
                                                                    Style="{StaticResource TabablzDragablzItemsControlStyle}">
-                                        <dragablz:DragablzItemsControl.MaxHeight>
-                                            <MultiBinding>
-                                                <MultiBinding.Converter>
-                                                    <dragablz:TabablzHeaderSizeConverter Orientation="Vertical" />
-                                                </MultiBinding.Converter>
+                                        <dragablz:DragablzItemsControl.AvailableHeight>
+                                            <MultiBinding Converter="{StaticResource TabablzHeaderSizeConverter}">
                                                 <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ActualHeight" />
                                                 <Binding RelativeSource="{RelativeSource Self}" Path="ItemsPresenterHeight" />
                                                 <Binding ElementName="PrefixContentControl" Path="ActualHeight" />
                                                 <Binding ElementName="DefaultAddButton" Path="DesiredSize.Height" />
                                                 <Binding ElementName="SuffixContentControl" Path="DesiredSize.Height" />
                                             </MultiBinding>
-                                        </dragablz:DragablzItemsControl.MaxHeight>
+                                        </dragablz:DragablzItemsControl.AvailableHeight>
                                     </dragablz:DragablzItemsControl>
                                     <Button Style="{StaticResource MaterialDesignAddItemCommandButtonStyle}"
                                             x:Name="DefaultAddButton"
