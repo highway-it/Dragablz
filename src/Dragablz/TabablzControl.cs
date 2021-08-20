@@ -64,14 +64,15 @@ namespace Dragablz
         /// </summary>
         public TabablzControl ( )
         {
-            AddHandler ( DragablzItem.DragStartedEvent, new DragablzDragStartedEventHandler ( ItemDragStarted ), true );
-            AddHandler ( DragablzItem.PreviewDragDeltaEvent, new DragablzDragDeltaEventHandler ( PreviewItemDragDelta ), true );
-            AddHandler ( DragablzItem.DragDeltaEvent, new DragablzDragDeltaEventHandler ( ItemDragDelta ), true );
-            AddHandler ( DragablzItem.DragCompletedEvent, new DragablzDragCompletedEventHandler ( ItemDragCompleted ), true );
+            AddHandler ( DragablzItem.DragStartedEvent,      new DragablzDragStartedEventHandler   ( ItemDragStarted      ), true );
+            AddHandler ( DragablzItem.PreviewDragDeltaEvent, new DragablzDragDeltaEventHandler     ( PreviewItemDragDelta ), true );
+            AddHandler ( DragablzItem.DragDeltaEvent,        new DragablzDragDeltaEventHandler     ( ItemDragDelta        ), true );
+            AddHandler ( DragablzItem.DragCompletedEvent,    new DragablzDragCompletedEventHandler ( ItemDragCompleted    ), true );
+
             CommandBindings.Add ( new CommandBinding ( AddItemCommand, AddItemHandler ) );
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Loaded           += OnLoaded;
+            Unloaded         += OnUnloaded;
             IsVisibleChanged += OnIsVisibleChanged;
         }
 
@@ -1044,7 +1045,11 @@ namespace Dragablz
             if ( ! IsMyItem ( e.DragablzItem ) ) return;
 
             var selectOnDragEnd = SelectionStrategy == SelectionStrategy.SelectOnDragEnd;
-            if ( selectOnDragEnd )
+            var selectOnClick   = SelectionStrategy == SelectionStrategy.SelectOnClickOnly &&
+                                  Math.Abs ( e.DragCompletedEventArgs.HorizontalChange ) <= 2 &&
+                                  Math.Abs ( e.DragCompletedEventArgs.VerticalChange   ) <= 2;
+
+            if ( selectOnDragEnd || selectOnClick )
                 SelectOnDrag ( e.DragablzItem );
 
             _interTabTransfer = null;
