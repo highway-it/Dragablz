@@ -82,17 +82,31 @@ namespace Dragablz.Core
                     yield return windowsByHandle [ hWnd ];
         }
 
+        public static void SetBelow ( this Window below, Window above )
+        {
+            var belowHandle = PresentationSource.FromVisual(below) is HwndSource belowSource ? belowSource.Handle : IntPtr.Zero;
+            var aboveHandle = PresentationSource.FromVisual(above) is HwndSource aboveSource ? aboveSource.Handle : IntPtr.Zero;
+
+            SetWindowPos ( belowHandle, aboveHandle, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE );
+        }
+
         public const int SW_SHOWNORMAL = 1;
 
         [DllImport ( "user32.dll" )]
         public static extern bool SetWindowPlacement ( IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl );
 
+        public const int SWP_NOSIZE = 1;
+        public const int SWP_NOMOVE = 2;
+
+        [DllImport ( "user32.dll" )]
+        public static extern bool SetWindowPos ( IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags );
+
         private const uint GW_HWNDNEXT = 2;
 
-        [DllImport ( "User32" )]
+        [DllImport ( "user32.dll" )]
         public static extern IntPtr GetTopWindow ( IntPtr hWnd );
 
-        [DllImport ( "User32" )]
+        [DllImport ( "user32.dll" )]
         public static extern IntPtr GetWindow ( IntPtr hWnd, uint wCmd );
 
         [Serializable]

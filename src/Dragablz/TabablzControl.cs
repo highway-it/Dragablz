@@ -933,56 +933,59 @@ namespace Dragablz
 
         private bool MonitorReentry ( DragablzDragDeltaEventArgs e )
         {
-            var screenMousePosition = _dragablzItemsControl.PointToScreen(Mouse.GetPosition(_dragablzItemsControl));
-
             var sourceTabablzControl = (TabablzControl) e.Source;
             if ( sourceTabablzControl.Items.Count > 1 && e.DragablzItem.LogicalIndex < sourceTabablzControl.FixedHeaderCount )
-            {
                 return false;
-            }
 
-            var otherTabablzControls = LoadedInstances
-                .Where(
-                    tc =>
-                        tc != this && tc.InterTabController != null && InterTabController != null
-                        && Equals(tc.InterTabController.Partition, InterTabController.Partition)
-                        && tc._dragablzItemsControl != null)
-                .Select(tc =>
-                {
-                    var topLeft = tc._dragablzItemsControl.PointToScreen(new Point ( ));
-                    var lastFixedItem = tc._dragablzItemsControl.DragablzItems ( )
-                        .OrderBy(di=> di.LogicalIndex)
-                        .Take(tc._dragablzItemsControl.FixedItemCount)
-                        .LastOrDefault ( );
-                    //TODO work this for vert tabs
-                    if (lastFixedItem != null)
-                        topLeft.Offset(lastFixedItem.X + lastFixedItem.ActualWidth, 0);
-                    var bottomRight =
-                        tc._dragablzItemsControl.PointToScreen(new Point(tc._dragablzItemsControl.ActualWidth,
-                            tc._dragablzItemsControl.ActualHeight));
+            var screenMousePosition  = _dragablzItemsControl.PointToScreen ( Mouse.GetPosition ( _dragablzItemsControl ) );
+            var otherTabablzControls = LoadedInstances.Where    ( tc => tc != this &&
+                                                                        tc.InterTabController != null && InterTabController != null &&
+                                                                        Equals ( tc.InterTabController.Partition, InterTabController.Partition ) &&
+                                                                        tc._dragablzItemsControl != null )
+                                                      .ToLookup ( Window.GetWindow );
 
-                    return new {tc, topLeft, bottomRight};
-                });
+            var sourceWindow = Window.GetWindow ( e.DragablzItem );
+            var targetWindow = Native.SortWindowsTopToBottom ( otherTabablzControls.Select ( window => window.Key ) )
+                                     .FirstOrDefault         ( window => new Rect ( 0, 0, window.ActualWidth, window.ActualHeight ).Contains ( window.PointFromScreen ( screenMousePosition ) ) );
 
-            var target = Native.SortWindowsTopToBottom(Application.Current.Windows.OfType < Window > ( ))
-                .Join(otherTabablzControls, w => w, a => Window.GetWindow(a.tc), (w, a) => a)
-                .FirstOrDefault(a => new Rect(a.topLeft, a.bottomRight).Contains(screenMousePosition));
+            if ( targetWindow == null )
+                return false;
 
-            if ( target == null ) return false;
+            targetWindow.SetBelow ( sourceWindow );
 
-            var mousePositionOnItem = Mouse.GetPosition(e.DragablzItem);
+            var target = otherTabablzControls [ targetWindow ].FirstOrDefault ( tc =>
+            {
+                var topLeft     = tc._dragablzItemsControl.PointToScreen ( new Point ( ) );
+                var bottomRight = tc._dragablzItemsControl.PointToScreen ( new Point ( tc._dragablzItemsControl.ActualWidth,
+                                                                                       tc._dragablzItemsControl.ActualHeight ) );
 
+                var lastFixedItem = tc._dragablzItemsControl.DragablzItems ( )
+                                                            .OrderBy       ( di => di.LogicalIndex )
+                                                            .Take          ( tc._dragablzItemsControl.FixedItemCount )
+                                                            .LastOrDefault ( );
+                // TODO: work this for vert tabs
+                if ( lastFixedItem != null )
+                    topLeft.Offset ( lastFixedItem.X + lastFixedItem.ActualWidth, 0 );
+
+                return new Rect ( topLeft, bottomRight ).Contains ( screenMousePosition );
+            } );
+
+            if ( target == null )
+                return false;
+
+            var mousePositionOnItem   = Mouse.GetPosition ( e.DragablzItem );
             var floatingItemSnapShots = this.VisualTreeDepthFirstTraversal ( )
-                .OfType < Layout > ( )
-                .SelectMany(l => l.FloatingDragablzItems ( ).Select(FloatingItemSnapShot.Take))
-                .ToList ( );
+                                            .OfType < Layout > ( )
+                                            .SelectMany ( l => l.FloatingDragablzItems ( ).Select ( FloatingItemSnapShot.Take ) )
+                                            .ToList     ( );
 
             e.DragablzItem.IsDropTargetFound = true;
-            var item = RemoveItem(e.DragablzItem);
 
-            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, mousePositionOnItem, floatingItemSnapShots);
+            var item             = RemoveItem ( e.DragablzItem );
+            var interTabTransfer = new InterTabTransfer ( item, e.DragablzItem, mousePositionOnItem, floatingItemSnapShots );
 
-            target.tc.ReceiveDrag ( interTabTransfer, _ => { } );
+            target.ReceiveDrag ( interTabTransfer, _ => { } );
+
             e.Cancel = true;
 
             return true;
