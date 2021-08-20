@@ -2,7 +2,7 @@
 {
     public enum BreachStrategy
     {
-        Default,
+        Immediate,
         Delay,
         DelayTabContent,
         DelayTabDispose

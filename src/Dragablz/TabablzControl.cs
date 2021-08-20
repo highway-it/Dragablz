@@ -76,7 +76,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty BreachStrategyProperty = DependencyProperty.Register(
-            nameof(BreachStrategy), typeof (BreachStrategy), typeof (TabablzControl), new PropertyMetadata(BreachStrategy.Default));
+            nameof(BreachStrategy), typeof (BreachStrategy), typeof (TabablzControl), new PropertyMetadata(BreachStrategy.Immediate));
 
         public BreachStrategy BreachStrategy
         {
