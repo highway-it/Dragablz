@@ -14,7 +14,7 @@ namespace Dragablz.Core
 
     internal class InterTabTransfer
     {
-        public InterTabTransfer ( object item, DragablzItem originatorContainer, Orientation breachOrientation, Point dragStartWindowOffset, Point dragStartItemOffset, Point itemPositionWithinHeader, Size itemSize, IList < FloatingItemSnapShot > floatingItemSnapShots, bool isTransposing )
+        public InterTabTransfer ( object item, DragablzItem originatorContainer, Orientation breachOrientation, Point dragStartWindowOffset, Point dragStartItemOffset, Size itemSize, IList < FloatingItemSnapShot > floatingItemSnapShots, bool isTransposing )
         {
             TransferReason = InterTabTransferReason.Breach;
 
@@ -23,7 +23,6 @@ namespace Dragablz.Core
             BreachOrientation = breachOrientation;
             DragStartWindowOffset = dragStartWindowOffset;
             DragStartItemOffset = dragStartItemOffset;
-            ItemPositionWithinHeader = itemPositionWithinHeader;
             ItemSize = itemSize;
             FloatingItemSnapShots = floatingItemSnapShots ?? throw new ArgumentNullException ( nameof ( floatingItemSnapShots ) );
             IsTransposing = isTransposing;
@@ -51,8 +50,6 @@ namespace Dragablz.Core
         public InterTabTransferReason TransferReason { get; }
 
         public Point DragStartItemOffset { get; }
-
-        public Point ItemPositionWithinHeader { get; }
 
         public Size ItemSize { get; }
 

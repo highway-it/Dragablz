@@ -1094,14 +1094,13 @@ namespace Dragablz
             if ( myWindow == null ) throw new ApplicationException ( "Unable to find owning window." );
             var dragStartWindowOffset = ConfigureNewHostSizeAndGetDragStartWindowOffset(myWindow, newTabHost, e.DragablzItem, isTransposing);
 
-            var dragableItemHeaderPoint = e.DragablzItem.TranslatePoint(new Point ( ), _dragablzItemsControl);
             var dragableItemSize = new Size(e.DragablzItem.ActualWidth, e.DragablzItem.ActualHeight);
             var floatingItemSnapShots = this.VisualTreeDepthFirstTraversal ( )
                 .OfType < Layout > ( )
                 .SelectMany(l => l.FloatingDragablzItems ( ).Select(FloatingItemSnapShot.Take))
                 .ToList ( );
 
-            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, breachOrientation.Value, dragStartWindowOffset, e.DragablzItem.MouseAtDragStart, dragableItemHeaderPoint, dragableItemSize, floatingItemSnapShots, isTransposing);
+            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, breachOrientation.Value, dragStartWindowOffset, e.DragablzItem.MouseAtDragStart, dragableItemSize, floatingItemSnapShots, isTransposing);
 
             if ( myWindow.WindowState == WindowState.Maximized )
             {
@@ -1240,8 +1239,8 @@ namespace Dragablz
                         interTabTransfer.ItemSize.Height );
                 else
                     _dragablzItemsControl.LockedMeasure = new Size (
-                        interTabTransfer.ItemPositionWithinHeader.X + interTabTransfer.ItemSize.Width,
-                        interTabTransfer.ItemPositionWithinHeader.Y + interTabTransfer.ItemSize.Height );
+                        interTabTransfer.OriginatorContainer.X + interTabTransfer.ItemSize.Width,
+                        interTabTransfer.OriginatorContainer.Y + interTabTransfer.ItemSize.Height );
             }
 
             var lastFixedItem = _dragablzItemsControl.DragablzItems ( )
