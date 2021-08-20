@@ -100,7 +100,7 @@ namespace Dragablz
             foreach ( var newItem in items )
             {
                 Panel.SetZIndex ( newItem, newItem.IsSelected ? int.MaxValue : --z );
-                SetLocation ( newItem, currentCoord );
+                SetLocation ( newItem, newItem.IsDropTargetFound ? _getLocation ( newItem ) : currentCoord );
                 newItem.LogicalIndex = logicalIndex++;
                 newItem.Measure ( measureBounds );
                 var desiredSize = _getDesiredSize(newItem);
