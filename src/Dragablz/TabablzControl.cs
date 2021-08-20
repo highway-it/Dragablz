@@ -74,6 +74,15 @@ namespace Dragablz
             IsVisibleChanged += OnIsVisibleChanged;
         }
 
+        public static readonly DependencyProperty BreachStrategyProperty = DependencyProperty.Register(
+            nameof(BreachStrategy), typeof (BreachStrategy), typeof (TabablzControl), new PropertyMetadata(BreachStrategy.Default));
+
+        public BreachStrategy BreachStrategy
+        {
+            get { return (BreachStrategy) GetValue ( BreachStrategyProperty ); }
+            set { SetValue ( BreachStrategyProperty, value ); }
+        }
+
         public static readonly DependencyProperty CustomHeaderItemStyleProperty = DependencyProperty.Register(
             nameof(CustomHeaderItemStyle), typeof (Style), typeof (TabablzControl), new PropertyMetadata(default(Style)));
 
@@ -1006,7 +1015,7 @@ namespace Dragablz
             var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, mousePositionOnItem, floatingItemSnapShots);
             e.DragablzItem.IsDragging = false;
 
-            target.tc.ReceiveDrag ( interTabTransfer );
+            target.tc.ReceiveDrag ( interTabTransfer, _ => { } );
             e.Cancel = true;
 
             return true;
@@ -1145,10 +1154,18 @@ namespace Dragablz
             var minSize = EmptyHeaderSizingHint == EmptyHeaderSizingHint.PreviousTab
                 ? new Size(_dragablzItemsControl.ActualWidth, _dragablzItemsControl.ActualHeight)
                 : new Size ( );
-            System.Diagnostics.Debug.WriteLine ( "B " + minSize );
+
+            var delayTabDispose = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabDispose;
+            if ( delayTabDispose )
+               SuspendContentPresenter ( );
 
             RemoveFromSource ( item );
-            _itemsHolder.Children.Remove ( contentPresenter );
+
+            if ( delayTabDispose )
+                contentPresenter.Visibility = Visibility.Hidden;
+            else
+                _itemsHolder.Children.Remove ( contentPresenter );
+
             if ( Items.Count == 0 )
             {
                 _dragablzItemsControl.MinHeight = minSize.Height;
@@ -1164,7 +1181,19 @@ namespace Dragablz
                 dragablzItem.IsSiblingDragging = false;
             }
 
-            newTabHost.TabablzControl.ReceiveDrag ( interTabTransfer );
+            Action < DragablzItem > continuation = _ => { };
+
+            if ( delayTabDispose )
+            {
+                continuation = _ =>
+                {
+                    ResumeContentPresenter ( );
+
+                    _itemsHolder.Children.Remove ( contentPresenter );
+                };
+            }
+
+            newTabHost.TabablzControl.ReceiveDrag ( interTabTransfer, continuation );
             interTabTransfer.OriginatorContainer.IsDropTargetFound = true;
             e.Cancel = true;
         }
@@ -1224,7 +1253,7 @@ namespace Dragablz
             return dragStartWindowOffset;
         }
 
-        internal void ReceiveDrag ( InterTabTransfer interTabTransfer )
+        internal void ReceiveDrag ( InterTabTransfer interTabTransfer, Action < DragablzItem > continuation )
         {
             var myWindow = Window.GetWindow(this);
             if ( myWindow == null ) throw new ApplicationException ( "Unable to find owning window." );
@@ -1249,65 +1278,91 @@ namespace Dragablz
                 .Take(_dragablzItemsControl.FixedItemCount)
                 .LastOrDefault ( );
 
+            var delayTabContent = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabContent;
+            if ( delayTabContent )
+                SuspendContentPresenter ( );
+
             AddToSource ( interTabTransfer.Item );
             SelectedItem = interTabTransfer.Item;
 
             Dispatcher.BeginInvoke ( new Action ( ( ) => Layout.RestoreFloatingItemSnapShots ( this, interTabTransfer.FloatingItemSnapShots ) ), DispatcherPriority.Loaded );
             _dragablzItemsControl.InstigateDrag ( interTabTransfer.Item, newContainer =>
-              {
-                  newContainer.PartitionAtDragStart = interTabTransfer.OriginatorContainer.PartitionAtDragStart;
-                  newContainer.IsDropTargetFound = true;
+            {
+                void Continue ( object sender, MouseEventArgs e )
+                {
+                    newContainer.LostMouseCapture -= Continue;
 
-                  if ( interTabTransfer.TransferReason == InterTabTransferReason.Breach )
-                  {
-                      if ( interTabTransfer.IsTransposing )
-                      {
-                          newContainer.Y = 0;
-                          newContainer.X = 0;
-                      }
-                      else
-                      {
-                          newContainer.Y = interTabTransfer.OriginatorContainer.Y;
-                          newContainer.X = interTabTransfer.OriginatorContainer.X;
-                      }
-                  }
-                  else
-                  {
-                      if ( TabStripPlacement == Dock.Top || TabStripPlacement == Dock.Bottom )
-                      {
-                          var mouseXOnItemsControl = Native.GetCursorPos ( ).X -
-                                                   _dragablzItemsControl.PointToScreen(new Point ( )).X;
-                          var newX = mouseXOnItemsControl - interTabTransfer.DragStartItemOffset.X;
-                          if ( lastFixedItem != null )
-                          {
-                              newX = Math.Max ( newX, lastFixedItem.X + lastFixedItem.ActualWidth );
-                          }
-                          newContainer.X = newX;
-                          newContainer.Y = 0;
-                      }
-                      else
-                      {
-                          var mouseYOnItemsControl = Native.GetCursorPos ( ).Y -
-                                                   _dragablzItemsControl.PointToScreen(new Point ( )).Y;
-                          var newY = mouseYOnItemsControl - interTabTransfer.DragStartItemOffset.Y;
-                          if ( lastFixedItem != null )
-                          {
-                              newY = Math.Max ( newY, lastFixedItem.Y + lastFixedItem.ActualHeight );
-                          }
-                          newContainer.X = 0;
-                          newContainer.Y = newY;
-                      }
-                  }
-                  newContainer.MouseAtDragStart = interTabTransfer.DragStartItemOffset;
-              } );
+                    continuation ( newContainer );
+
+                    if ( delayTabContent )
+                        ResumeContentPresenter ( );
+                }
+
+                newContainer.LostMouseCapture += Continue;
+
+                newContainer.PartitionAtDragStart = interTabTransfer.OriginatorContainer.PartitionAtDragStart;
+                newContainer.IsDropTargetFound = true;
+
+                if ( interTabTransfer.TransferReason == InterTabTransferReason.Breach )
+                {
+                    if ( interTabTransfer.IsTransposing )
+                    {
+                        newContainer.Y = 0;
+                        newContainer.X = 0;
+                    }
+                    else
+                    {
+                        newContainer.Y = interTabTransfer.OriginatorContainer.Y;
+                        newContainer.X = interTabTransfer.OriginatorContainer.X;
+                    }
+                }
+                else
+                {
+                    if ( TabStripPlacement == Dock.Top || TabStripPlacement == Dock.Bottom )
+                    {
+                        var mouseXOnItemsControl = Native.GetCursorPos ( ).X -
+                                                 _dragablzItemsControl.PointToScreen(new Point ( )).X;
+                        var newX = mouseXOnItemsControl - interTabTransfer.DragStartItemOffset.X;
+                        if ( lastFixedItem != null )
+                        {
+                            newX = Math.Max ( newX, lastFixedItem.X + lastFixedItem.ActualWidth );
+                        }
+                        newContainer.X = newX;
+                        newContainer.Y = 0;
+                    }
+                    else
+                    {
+                        var mouseYOnItemsControl = Native.GetCursorPos ( ).Y -
+                                                 _dragablzItemsControl.PointToScreen(new Point ( )).Y;
+                        var newY = mouseYOnItemsControl - interTabTransfer.DragStartItemOffset.Y;
+                        if ( lastFixedItem != null )
+                        {
+                            newY = Math.Max ( newY, lastFixedItem.Y + lastFixedItem.ActualHeight );
+                        }
+                        newContainer.X = 0;
+                        newContainer.Y = newY;
+                    }
+                }
+                newContainer.MouseAtDragStart = interTabTransfer.DragStartItemOffset;
+            } );
         }
+
+        protected void SuspendContentPresenter ( ) => skipUpdateSelectedItem = true;
+        protected void ResumeContentPresenter  ( )
+        {
+            skipUpdateSelectedItem = false;
+
+            UpdateSelectedItem ( );
+        }
+
+        private bool skipUpdateSelectedItem;
 
         /// <summary>
         /// generate a ContentPresenter for the selected item
         /// </summary>
         private void UpdateSelectedItem ( )
         {
-            if ( _itemsHolder == null )
+            if ( skipUpdateSelectedItem || _itemsHolder == null )
             {
                 return;
             }
