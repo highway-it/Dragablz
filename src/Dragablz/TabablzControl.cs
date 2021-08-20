@@ -1128,10 +1128,13 @@ namespace Dragablz
 
             RemoveFromSource ( item );
 
-            if ( delayTabDispose )
-                contentPresenter.Visibility = Visibility.Hidden;
-            else
-                _itemsHolder.Children.Remove ( contentPresenter );
+            if ( contentPresenter != null )
+            {
+                if ( delayTabDispose )
+                    contentPresenter.Visibility = Visibility.Hidden;
+                else
+                    _itemsHolder.Children.Remove ( contentPresenter );
+            }
 
             if ( Items.Count == 0 )
             {
@@ -1156,7 +1159,8 @@ namespace Dragablz
                 {
                     ResumeContentPresenter ( );
 
-                    _itemsHolder.Children.Remove ( contentPresenter );
+                    if ( contentPresenter != null )
+                        _itemsHolder.Children.Remove ( contentPresenter );
                 };
             }
 
