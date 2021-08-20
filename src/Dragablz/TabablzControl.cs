@@ -84,6 +84,15 @@ namespace Dragablz
             set { SetValue ( BreachStrategyProperty, value ); }
         }
 
+        public static readonly DependencyProperty SelectionStrategyProperty = DependencyProperty.Register(
+            nameof(SelectionStrategy), typeof (SelectionStrategy), typeof (TabablzControl), new PropertyMetadata(SelectionStrategy.SelectOnDragStart));
+
+        public SelectionStrategy SelectionStrategy
+        {
+            get { return (SelectionStrategy) GetValue ( SelectionStrategyProperty ); }
+            set { SetValue ( SelectionStrategyProperty, value ); }
+        }
+
         public static readonly DependencyProperty AdjacentHeaderItemOffsetProperty = DependencyProperty.Register(
             nameof(AdjacentHeaderItemOffset), typeof (double), typeof (TabablzControl), new PropertyMetadata(default(double), OnAdjacentHeaderItemOffsetChanged));
 
@@ -859,26 +868,23 @@ namespace Dragablz
         private void ItemDragStarted ( object sender, DragablzDragStartedEventArgs e )
         {
             if ( ! IsMyItem ( e.DragablzItem ) ) return;
-
-            //the thumb may steal the user selection, so we will try and apply it manually
             if ( _dragablzItemsControl == null ) return;
 
             e.DragablzItem.IsDropTargetFound = false;
 
-            if ( ! ( ItemsControlFromItemContainer ( e.DragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) ) return;
+            if ( ! ( ItemsControlFromItemContainer ( e.DragablzItem ) is DragablzItemsControl sourceOfDragItemsControl ) || ! Equals ( sourceOfDragItemsControl, _dragablzItemsControl ) )
+                return;
 
             var itemsControlOffset = Mouse.GetPosition(_dragablzItemsControl);
             _tabHeaderDragStartInformation = new TabHeaderDragStartInformation ( e.DragablzItem, itemsControlOffset.X,
                 itemsControlOffset.Y, e.DragStartedEventArgs.HorizontalOffset, e.DragStartedEventArgs.VerticalOffset );
 
-            foreach ( var otherItem in _dragablzItemsControl.Containers < DragablzItem > ( ).Except ( e.DragablzItem ) )
-                otherItem.IsSelected = false;
-            e.DragablzItem.IsSelected = true;
             e.DragablzItem.PartitionAtDragStart = InterTabController?.Partition;
-            var item = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(e.DragablzItem);
-            if ( item is TabItem tabItem )
-                tabItem.IsSelected = true;
-            SelectedItem = item;
+
+            //the thumb may steal the user selection, so we will try and apply it manually
+            var selectOnDragStart = SelectionStrategy == SelectionStrategy.SelectOnDragStart;
+            if ( selectOnDragStart )
+                SelectOnDrag ( e.DragablzItem );
 
             if ( ShouldDragWindow ( sourceOfDragItemsControl ) )
                 IsDraggingWindow = true;
@@ -1037,6 +1043,10 @@ namespace Dragablz
         {
             if ( ! IsMyItem ( e.DragablzItem ) ) return;
 
+            var selectOnDragEnd = SelectionStrategy == SelectionStrategy.SelectOnDragEnd;
+            if ( selectOnDragEnd )
+                SelectOnDrag ( e.DragablzItem );
+
             _interTabTransfer = null;
             _dragablzItemsControl.LockedMeasure = null;
             IsDraggingWindow = false;
@@ -1044,12 +1054,12 @@ namespace Dragablz
 
         private void ItemDragDelta ( object sender, DragablzDragDeltaEventArgs e )
         {
-            if ( ! IsMyItem ( e.DragablzItem ) ) return;
-            if ( IsFixedItem ( e.DragablzItem ) )
-                return;
+            if ( ! IsMyItem  ( e.DragablzItem ) ) return;
+            if ( IsFixedItem ( e.DragablzItem ) ) return;
 
             if ( _tabHeaderDragStartInformation == null ||
-                ! Equals ( _tabHeaderDragStartInformation.DragItem, e.DragablzItem ) || InterTabController == null ) return;
+                ! Equals ( _tabHeaderDragStartInformation.DragItem, e.DragablzItem ) || InterTabController == null )
+                return;
 
             if ( InterTabController.InterTabClient == null )
                 throw new InvalidOperationException ( "An InterTabClient must be provided on an InterTabController." );
@@ -1069,6 +1079,22 @@ namespace Dragablz
         private bool IsMyItem ( DragablzItem item )
         {
             return _dragablzItemsControl?.DragablzItems ( ).Contains ( item ) == true;
+        }
+
+        private void SelectOnDrag ( DragablzItem dragablzItem )
+        {
+            if ( _dragablzItemsControl == null )
+                return;
+
+            foreach ( var otherItem in _dragablzItemsControl.Containers < DragablzItem > ( ).Except ( dragablzItem ) )
+                otherItem.IsSelected = false;
+
+            dragablzItem.IsSelected = true;
+            var item = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(dragablzItem);
+            if ( item is TabItem tabItem )
+                tabItem.IsSelected = true;
+
+            SelectedItem = item;
         }
 
         private void MonitorBreach ( DragablzDragDeltaEventArgs e )
