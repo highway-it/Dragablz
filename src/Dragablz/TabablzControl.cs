@@ -41,6 +41,7 @@ namespace Dragablz
 
         private static readonly HashSet < TabablzControl > LoadedInstances = new HashSet < TabablzControl > ( );
         private static readonly HashSet < TabablzControl > VisibleInstances = new HashSet < TabablzControl > ( );
+        private static readonly HashSet < TabablzControl > SuspendedInstances = new HashSet < TabablzControl > ( );
 
         private Panel _itemsHolder;
         private TabHeaderDragStartInformation _tabHeaderDragStartInformation;
@@ -1150,18 +1151,8 @@ namespace Dragablz
             }
 
             Action < DragablzItem > continuation = _ => { };
-
-            if ( delayTabDispose )
-            {
-                continuation = newContainer =>
-                {
-                    if ( ! newContainer.IsDropTargetFound )
-                        ResumeContentPresenter ( );
-
-                    if ( contentPresenter != null )
-                        _itemsHolder.Children.Remove ( contentPresenter );
-                };
-            }
+            if ( delayTabDispose && contentPresenter != null )
+                continuation = newContainer => _itemsHolder.Children.Remove ( contentPresenter );
 
             newTabHost.TabablzControl.ReceiveDrag ( interTabTransfer, continuation );
             interTabTransfer.OriginatorContainer.IsDropTargetFound = true;
@@ -1243,11 +1234,6 @@ namespace Dragablz
                         interTabTransfer.OriginatorContainer.Y + interTabTransfer.ItemSize.Height );
             }
 
-            var lastFixedItem = _dragablzItemsControl.DragablzItems ( )
-                .OrderBy(i => i.LogicalIndex)
-                .Take(_dragablzItemsControl.FixedItemCount)
-                .LastOrDefault ( );
-
             var delayTabContent = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabContent;
             if ( delayTabContent )
                 SuspendContentPresenter ( );
@@ -1258,14 +1244,15 @@ namespace Dragablz
             Dispatcher.BeginInvoke ( new Action ( ( ) => Layout.RestoreFloatingItemSnapShots ( this, interTabTransfer.FloatingItemSnapShots ) ), DispatcherPriority.Loaded );
             _dragablzItemsControl.InstigateDrag ( interTabTransfer.Item, newContainer =>
             {
+                var delayTabDispose = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabDispose;
+                if ( delayTabContent || delayTabDispose )
+                    newContainer.LostMouseCapture += ResumeContentPresentersOnFinalDrop;
+
                 void Continue ( object sender, MouseEventArgs e )
                 {
                     newContainer.LostMouseCapture -= Continue;
 
                     continuation ( newContainer );
-
-                    if ( delayTabContent && ! newContainer.IsDropTargetFound )
-                        ResumeContentPresenter ( );
                 }
 
                 newContainer.LostMouseCapture += Continue;
@@ -1288,6 +1275,11 @@ namespace Dragablz
                 }
                 else
                 {
+                    var lastFixedItem = _dragablzItemsControl.DragablzItems ( )
+                                                             .OrderBy(i => i.LogicalIndex)
+                                                             .Take(_dragablzItemsControl.FixedItemCount)
+                                                             .LastOrDefault ( );
+
                     if ( TabStripPlacement == Dock.Top || TabStripPlacement == Dock.Bottom )
                     {
                         var mouseXOnItemsControl = Native.GetCursorPos ( ).ToWpf ( ).X -
@@ -1316,16 +1308,42 @@ namespace Dragablz
 
                 newContainer.MouseAtDragStart = interTabTransfer.DragStartItemOffset;
 
-                PreviewItemDragDelta ( this, new DragablzDragDeltaEventArgs ( DragablzItem.PreviewDragDeltaEvent, newContainer, new DragDeltaEventArgs ( 0, 0 ) ) { Source = this } );
+                if ( interTabTransfer.TransferReason == InterTabTransferReason.Breach )
+                    PreviewItemDragDelta ( this, new DragablzDragDeltaEventArgs ( DragablzItem.PreviewDragDeltaEvent, newContainer, new DragDeltaEventArgs ( 0, 0 ) ) { Source = this } );
             } );
         }
 
-        protected void SuspendContentPresenter ( ) => skipUpdateSelectedItem = true;
-        protected void ResumeContentPresenter  ( )
+        protected void SuspendContentPresenter ( )
         {
+            skipUpdateSelectedItem = true;
+
+            SuspendedInstances.Add ( this );
+        }
+
+        protected void ResumeContentPresenter ( )
+        {
+            SuspendedInstances.Remove ( this );
+
             skipUpdateSelectedItem = false;
 
             UpdateSelectedItem ( );
+        }
+
+        protected static void ResumeContentPresenters ( )
+        {
+            foreach ( var tabablzControl in SuspendedInstances.ToList ( ) )
+                tabablzControl.ResumeContentPresenter ( );
+        }
+
+        private void ResumeContentPresentersOnFinalDrop ( object sender, MouseEventArgs e )
+        {
+            var newContainer = (DragablzItem) sender;
+            if ( newContainer.IsDropTargetFound )
+                return;
+
+            newContainer.LostMouseCapture -= ResumeContentPresentersOnFinalDrop;
+
+            ResumeContentPresenters ( );
         }
 
         private bool skipUpdateSelectedItem;
