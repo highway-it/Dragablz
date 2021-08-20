@@ -78,8 +78,8 @@ namespace Dragablz.Core
                 .ToDictionary(x => x.handle, x => x.window);
 
             for ( var hWnd = GetTopWindow ( IntPtr.Zero ); hWnd != IntPtr.Zero; hWnd = GetWindow ( hWnd, GW_HWNDNEXT ) )
-                if ( windowsByHandle.ContainsKey ( hWnd ) )
-                    yield return windowsByHandle [ hWnd ];
+                if ( windowsByHandle.TryGetValue ( hWnd, out var window ) )
+                    yield return window;
         }
 
         public static void SetBelow ( this Window below, Window above )
