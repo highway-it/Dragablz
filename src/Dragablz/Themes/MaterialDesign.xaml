@@ -149,7 +149,7 @@
         <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidForegroundBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="local:MaterialDesignAssist.IndicatorBrush" Value="{DynamicResource SecondaryAccentBrush}" />
+        <Setter Property="local:MaterialDesignAssist.IndicatorBrush" Value="{DynamicResource SecondaryHueMidBrush}" />
         <Setter Property="Margin" Value="0 0 0 0" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="MinWidth" Value="80" />
@@ -196,8 +196,10 @@
                                 </Grid>
                             </local:Ripple>
                         </Border>
-                        <Border x:Name="SelectionHighlightBorder" Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:MaterialDesignAssist.IndicatorBrush)}" Height="2"
+                        <Border x:Name="SelectionHighlightBorder"
                                 Grid.Row="1"
+                                Background="{TemplateBinding local:MaterialDesignAssist.IndicatorBrush}"
+                                Height="2"
                                 Visibility="Hidden" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -267,8 +269,10 @@
                                 </Grid>
                             </local:Ripple>
                         </Border>
-                        <Border x:Name="SelectionHighlightBorder" Background="{DynamicResource SecondaryAccentBrush}" Width="2"
+                        <Border x:Name="SelectionHighlightBorder"
                                 Grid.Column="1"
+                                Background="{TemplateBinding local:MaterialDesignAssist.IndicatorBrush}"
+                                Width="2"
                                 Visibility="Hidden" />
                     </Grid>
                     <ControlTemplate.Triggers>
