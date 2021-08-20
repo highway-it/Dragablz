@@ -980,7 +980,6 @@ namespace Dragablz
             var item = RemoveItem(e.DragablzItem);
 
             var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, mousePositionOnItem, floatingItemSnapShots);
-            e.DragablzItem.IsDragging = false;
 
             target.tc.ReceiveDrag ( interTabTransfer, _ => { } );
             e.Cancel = true;
@@ -1154,9 +1153,10 @@ namespace Dragablz
 
             if ( delayTabDispose )
             {
-                continuation = _ =>
+                continuation = newContainer =>
                 {
-                    ResumeContentPresenter ( );
+                    if ( ! newContainer.IsDropTargetFound )
+                        ResumeContentPresenter ( );
 
                     if ( contentPresenter != null )
                         _itemsHolder.Children.Remove ( contentPresenter );
@@ -1264,7 +1264,7 @@ namespace Dragablz
 
                     continuation ( newContainer );
 
-                    if ( delayTabContent )
+                    if ( delayTabContent && ! newContainer.IsDropTargetFound )
                         ResumeContentPresenter ( );
                 }
 
