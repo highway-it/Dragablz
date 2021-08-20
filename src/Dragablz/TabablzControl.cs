@@ -1290,8 +1290,8 @@ namespace Dragablz
                 {
                     if ( TabStripPlacement == Dock.Top || TabStripPlacement == Dock.Bottom )
                     {
-                        var mouseXOnItemsControl = Native.GetCursorPos ( ).X -
-                                                 _dragablzItemsControl.PointToScreen(new Point ( )).X;
+                        var mouseXOnItemsControl = Native.GetCursorPos ( ).ToWpf ( ).X -
+                                                 _dragablzItemsControl.PointToScreen(new Point ( )).ToWpf ( ).X;
                         var newX = mouseXOnItemsControl - interTabTransfer.DragStartItemOffset.X;
                         if ( lastFixedItem != null )
                         {
@@ -1302,8 +1302,8 @@ namespace Dragablz
                     }
                     else
                     {
-                        var mouseYOnItemsControl = Native.GetCursorPos ( ).Y -
-                                                 _dragablzItemsControl.PointToScreen(new Point ( )).Y;
+                        var mouseYOnItemsControl = Native.GetCursorPos ( ).ToWpf ( ).Y -
+                                                 _dragablzItemsControl.PointToScreen(new Point ( )).ToWpf ( ).Y;
                         var newY = mouseYOnItemsControl - interTabTransfer.DragStartItemOffset.Y;
                         if ( lastFixedItem != null )
                         {
