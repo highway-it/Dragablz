@@ -1314,7 +1314,10 @@ namespace Dragablz
                         newContainer.Y = newY;
                     }
                 }
+
                 newContainer.MouseAtDragStart = interTabTransfer.DragStartItemOffset;
+
+                PreviewItemDragDelta ( this, new DragablzDragDeltaEventArgs ( DragablzItem.PreviewDragDeltaEvent, newContainer, new DragDeltaEventArgs ( 0, 0 ) ) { Source = this } );
             } );
         }
 
