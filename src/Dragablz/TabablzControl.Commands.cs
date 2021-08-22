@@ -164,9 +164,11 @@ namespace Dragablz
 
             var item = dragablzItem.DataContext;
 
+            var contentPresenter = FindChildContentPresenter ( item );
+
             RemoveFromSource ( item );
 
-            _itemsHolder.Children.Remove ( FindChildContentPresenter ( item ) );
+            _itemsHolder.Children.Remove ( contentPresenter );
 
             if ( Items.Count == 0 )
             {
