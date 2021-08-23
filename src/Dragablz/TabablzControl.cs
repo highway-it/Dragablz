@@ -77,7 +77,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty BreachStrategyProperty = DependencyProperty.Register(
-            nameof(BreachStrategy), typeof (BreachStrategy), typeof (TabablzControl), new PropertyMetadata(BreachStrategy.Immediate));
+            nameof(BreachStrategy), typeof (BreachStrategy), typeof (TabablzControl), new PropertyMetadata(BreachStrategy.RemoveThenAddOnBreach));
 
         public BreachStrategy BreachStrategy
         {
@@ -1140,37 +1140,39 @@ namespace Dragablz
             {
                 var desktopMousePosition = Native.GetCursorPos ( ).ToWpf ( );
                 newTabHost.Container.Left = desktopMousePosition.X - dragStartWindowOffset.X;
-                newTabHost.Container.Top = desktopMousePosition.Y - dragStartWindowOffset.Y;
+                newTabHost.Container.Top  = desktopMousePosition.Y - dragStartWindowOffset.Y;
             }
             else
             {
                 newTabHost.Container.Left = myWindow.Left;
                 newTabHost.Container.Top = myWindow.Top;
             }
+
             newTabHost.Container.Show ( );
-            var contentPresenter = FindChildContentPresenter(item);
 
-            //stop the header shrinking if the tab stays open when empty
-            var minSize = EmptyHeaderSizingHint == EmptyHeaderSizingHint.PreviousTab
-                ? new Size(_dragablzItemsControl.ActualWidth, _dragablzItemsControl.ActualHeight)
-                : new Size ( );
+            var contentPresenter = FindChildContentPresenter ( item );
 
-            var delayTabDispose = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabDispose;
-            if ( delayTabDispose )
+            var delayed = BreachStrategy == BreachStrategy.RemoveThenAddOnDrop || BreachStrategy == BreachStrategy.TransferOnDrop;
+            if ( delayed )
                SuspendContentPresenter ( );
 
             RemoveFromSource ( item );
+            _itemsHolder.Children.Remove ( contentPresenter );
 
-            if ( contentPresenter != null )
+            var transfer = BreachStrategy == BreachStrategy.TransferOnBreach || BreachStrategy == BreachStrategy.TransferOnDrop;
+            if ( contentPresenter != null && transfer )
             {
-                if ( delayTabDispose )
-                    contentPresenter.Visibility = Visibility.Hidden;
-                else
-                    _itemsHolder.Children.Remove ( contentPresenter );
+                contentPresenter.Visibility = Visibility.Collapsed;
+                newTabHost.TabablzControl._itemsHolder.Children.Add ( contentPresenter );
             }
 
             if ( Items.Count == 0 )
             {
+                //stop the header shrinking if the tab stays open when empty
+                var minSize = EmptyHeaderSizingHint == EmptyHeaderSizingHint.PreviousTab
+                    ? new Size(_dragablzItemsControl.ActualWidth, _dragablzItemsControl.ActualHeight)
+                    : new Size ( );
+
                 _dragablzItemsControl.MinHeight = minSize.Height;
                 _dragablzItemsControl.MinWidth = minSize.Width;
                 Layout.ConsolidateBranch ( this );
@@ -1180,15 +1182,11 @@ namespace Dragablz
 
             foreach ( var dragablzItem in _dragablzItemsControl.DragablzItems ( ) )
             {
-                dragablzItem.IsDragging = false;
+                dragablzItem.IsDragging        = false;
                 dragablzItem.IsSiblingDragging = false;
             }
 
-            Action < DragablzItem > continuation = _ => { };
-            if ( delayTabDispose && contentPresenter != null )
-                continuation = newContainer => _itemsHolder.Children.Remove ( contentPresenter );
-
-            newTabHost.TabablzControl.ReceiveDrag ( interTabTransfer, continuation );
+            newTabHost.TabablzControl.ReceiveDrag ( interTabTransfer );
             interTabTransfer.OriginatorContainer.IsDropTargetFound = true;
             e.Cancel = true;
         }
@@ -1248,7 +1246,7 @@ namespace Dragablz
             return dragStartWindowOffset;
         }
 
-        internal void ReceiveDrag ( InterTabTransfer interTabTransfer, Action < DragablzItem > continuation )
+        internal void ReceiveDrag ( InterTabTransfer interTabTransfer, Action < DragablzItem >? continuation = null )
         {
             var myWindow = Window.GetWindow(this);
             if ( myWindow == null ) throw new ApplicationException ( "Unable to find owning window." );
@@ -1268,8 +1266,8 @@ namespace Dragablz
                         interTabTransfer.OriginatorContainer.Y + interTabTransfer.ItemSize.Height );
             }
 
-            var delayTabContent = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabContent;
-            if ( delayTabContent )
+            var delayed = BreachStrategy == BreachStrategy.RemoveThenAddOnDrop || BreachStrategy == BreachStrategy.TransferOnDrop;
+            if ( delayed )
                 SuspendContentPresenter ( );
 
             AddToSource ( interTabTransfer.Item );
@@ -1278,15 +1276,14 @@ namespace Dragablz
             Dispatcher.BeginInvoke ( new Action ( ( ) => Layout.RestoreFloatingItemSnapShots ( this, interTabTransfer.FloatingItemSnapShots ) ), DispatcherPriority.Loaded );
             _dragablzItemsControl.InstigateDrag ( interTabTransfer.Item, newContainer =>
             {
-                var delayTabDispose = BreachStrategy == BreachStrategy.Delay || BreachStrategy == BreachStrategy.DelayTabDispose;
-                if ( delayTabContent || delayTabDispose )
+                if ( delayed )
                     newContainer.LostMouseCapture += ResumeContentPresentersOnFinalDrop;
 
                 void Continue ( object sender, MouseEventArgs e )
                 {
                     newContainer.LostMouseCapture -= Continue;
 
-                    continuation ( newContainer );
+                    continuation?.Invoke ( newContainer );
                 }
 
                 newContainer.LostMouseCapture += Continue;

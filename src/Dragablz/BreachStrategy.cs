@@ -2,9 +2,9 @@
 {
     public enum BreachStrategy
     {
-        Immediate,
-        Delay,
-        DelayTabContent,
-        DelayTabDispose
+        RemoveThenAddOnBreach,
+        RemoveThenAddOnDrop,
+        TransferOnBreach,
+        TransferOnDrop
     }
 }
