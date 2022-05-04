@@ -1052,6 +1052,7 @@ namespace Dragablz
             if ( selectOnDragEnd || selectOnClick )
                 SelectOnDrag ( e.DragablzItem );
 
+            _tabHeaderDragStartInformation = null;
             _interTabTransfer = null;
             _dragablzItemsControl.LockedMeasure = null;
             IsDraggingWindow = false;
