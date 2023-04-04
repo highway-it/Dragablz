@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Authors>Jean-Philippe Leconte</Authors>
-    <Copyright>Copyright © HIT 2020-2021</Copyright>
+    <Copyright>Copyright © HIT 2020-2023</Copyright>
     <Company>HIT</Company>
     <VersionPrefix>2.0.2</VersionPrefix>
     <RepositoryType>git</RepositoryType>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
